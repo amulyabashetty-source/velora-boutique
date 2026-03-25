@@ -45,4 +45,4 @@ npm start
 
 ## 🌱 Status
 
-Project is currently in development.
+This project is currently under active development. New features and improvements are being added regularly.
