@@ -6,3 +6,10 @@
 body {
   background-color: #EDE8E1;
 }
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  scrollbar-width: none;
+}

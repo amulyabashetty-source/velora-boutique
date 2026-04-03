@@ -3,9 +3,15 @@ import Admin from "../models/Admin.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
+// ✅ IMPORT NEW CONTROLLERS
+import {
+  forgotPassword,
+  resetPassword,
+} from "../controllers/authController.js";
+
 const router = express.Router();
 
-// ➤ Register Admin (only once)
+// ➤ Register Admin
 router.post("/register", async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -20,7 +26,6 @@ router.post("/register", async (req, res) => {
     await admin.save();
 
     res.json({ message: "Admin created ✅" });
-
   } catch (err) {
     res.status(500).json(err);
   }
@@ -45,8 +50,8 @@ router.post("/login", async (req, res) => {
 
     const token = jwt.sign(
       { id: admin._id },
-      "secret123", // later move to .env
-      { expiresIn: "1d" }
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
     );
 
     res.json({ token });
@@ -55,5 +60,28 @@ router.post("/login", async (req, res) => {
     res.status(500).json(err);
   }
 });
+
+// ❌ DELETE ADMIN
+router.delete("/delete/:email", async (req, res) => {
+  try {
+    const { email } = req.params;
+
+    const deleted = await Admin.findOneAndDelete({ email });
+
+    if (!deleted) {
+      return res.status(404).json({ message: "Admin not found ❌" });
+    }
+
+    res.json({ message: "Admin deleted ✅" });
+
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+
+
+// ✅ NEW ROUTES (VERY IMPORTANT)
+router.post("/forgot-password", forgotPassword);
+router.post("/reset-password/:token", resetPassword);
 
 export default router;

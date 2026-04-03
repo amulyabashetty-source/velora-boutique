@@ -7,19 +7,19 @@ function Collections() {
     {
       title: "Kurtis",
       image:
-        "https://i.pinimg.com/564x/5d/7f/5a/5d7f5a5b0d5c9a45f4c3f0c6a0e0b6e2.jpg",
+        "https://i.pinimg.com/736x/d2/76/08/d27608edea6ae478b6215dba87c14b9b.jpg",
       link: "/category/kurtis",
     },
     {
       title: "Anarkalis",
       image:
-        "https://i.pinimg.com/564x/2e/9f/91/2e9f91c8b8c1d5c6b7e4d5c1f3c2e8b2.jpg",
+        "https://i.pinimg.com/1200x/09/21/d5/0921d598b9d481ea02be0c2258a73f0a.jpg",
       link: "/category/anarkalis",
     },
     {
       title: "Daily Wear",
       image:
-        "https://i.pinimg.com/564x/9c/6d/9a/9c6d9a5c5e4f3c2b1a0e9d8c7b6a5f4.jpg",
+        "https://i.pinimg.com/736x/b8/ad/92/b8ad9275082209d9a07a362bf28b0cd8.jpg",
       link: "/category/daily-wear",
     },
   ];

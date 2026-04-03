@@ -1,23 +1,31 @@
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 function Admin() {
+  const formRef = useRef(null);
+  const navigate = useNavigate();
+
   const [form, setForm] = useState({
     name: "",
     price: "",
     category: "",
-    image: null,
-    description: ""
+    images: [],
+    imageUrls: "",
+    description: "",
+    fabric: "",
+    occasion: "",
+    pattern: "",
+    care: "",
+    origin: "",
   });
 
-  const [products, setProducts] = useState([]);
   const [editingId, setEditingId] = useState(null);
-
-  const formRef = useRef();
+  const [products, setProducts] = useState([]);
 
   const token = localStorage.getItem("token");
 
-  // 🔹 fetch products
+  // FETCH PRODUCTS
   const fetchProducts = async () => {
     const res = await axios.get("http://localhost:5000/api/products");
     setProducts(res.data);
@@ -27,60 +35,72 @@ function Admin() {
     fetchProducts();
   }, []);
 
-  // 🔹 input change
+  // INPUT CHANGE
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    setForm({ ...form, [e.target.name]: e.target.value || "" });
   };
 
+  // FILE CHANGE
   const handleFileChange = (e) => {
-    setForm({ ...form, image: e.target.files[0] });
+    setForm({ ...form, images: e.target.files });
   };
 
-  // 🔹 submit
+  // SUBMIT
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    try {
-      const formData = new FormData();
+    if (!token) {
+      alert("Login first ❌");
+      return;
+    }
 
-      formData.append("name", form.name);
-      formData.append("price", form.price);
-      formData.append("category", form.category);
-      formData.append("description", form.description);
+    const formData = new FormData();
 
-      // ✅ FILE or URL
-      if (form.image instanceof File) {
-        formData.append("image", form.image);
-      } else if (typeof form.image === "string") {
-        formData.append("image", form.image);
+    Object.keys(form).forEach((key) => {
+      if (key !== "images") {
+        formData.append(key, form[key] || "");
       }
+    });
 
+    if (form.images && form.images.length > 0) {
+      for (let i = 0; i < form.images.length; i++) {
+        formData.append("images", form.images[i]);
+      }
+    }
+
+    try {
       if (editingId) {
         await axios.put(
           `http://localhost:5000/api/products/${editingId}`,
           formData,
           {
-            headers: { Authorization: token },
+            headers: { Authorization: `Bearer ${token}` },
           }
         );
-        alert("Product updated ✅");
+        alert("Product Updated ✅");
       } else {
         await axios.post(
           "http://localhost:5000/api/products/add",
           formData,
           {
-            headers: { Authorization: token },
+            headers: { Authorization: `Bearer ${token}` },
           }
         );
-        alert("Product added ✅");
+        alert("Product Added ✅");
       }
 
       setForm({
         name: "",
         price: "",
         category: "",
-        image: null,
-        description: ""
+        images: [],
+        imageUrls: "",
+        description: "",
+        fabric: "",
+        occasion: "",
+        pattern: "",
+        care: "",
+        origin: "",
       });
 
       setEditingId(null);
@@ -92,142 +112,165 @@ function Admin() {
     }
   };
 
-  // 🔹 delete
+  // DELETE
   const deleteProduct = async (id) => {
-    const confirmDelete = window.confirm("Delete this product?");
-    if (!confirmDelete) return;
-
-    await axios.delete(
-      `http://localhost:5000/api/products/${id}`,
-      {
-        headers: { Authorization: token },
-      }
-    );
-
+    await axios.delete(`http://localhost:5000/api/products/${id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
     fetchProducts();
   };
 
-  // 🔹 edit
-  const handleEdit = (p) => {
-    setForm({
-      name: p.name,
-      price: p.price,
-      category: p.category,
-      image: "",
-      description: p.description
-    });
-
-    setEditingId(p._id);
-    formRef.current.scrollIntoView({ behavior: "smooth" });
-  };
-
   return (
-    <div className="p-10 max-w-4xl mx-auto">
+    <div className="p-10 max-w-5xl mx-auto">
 
       <h2 className="text-2xl font-bold mb-6">Admin Panel</h2>
 
+      {editingId && (
+        <p className="text-yellow-600 font-semibold mb-3">
+          ✏️ Editing Product
+        </p>
+      )}
+
       {/* FORM */}
-      <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
+      <form ref={formRef} onSubmit={handleSubmit} className="space-y-3">
 
-        <input
-          name="name"
-          value={form.name}
-          onChange={handleChange}
-          placeholder="Product Name"
-          className="w-full border p-2"
-        />
+        <input name="name" value={form.name} onChange={handleChange} placeholder="Name" className="w-full border p-2" />
 
-        <input
-          type="number"
-          name="price"
-          value={form.price}
-          onChange={handleChange}
-          placeholder="Price"
-          className="w-full border p-2"
-        />
+        <input type="number" name="price" value={form.price} onChange={handleChange} placeholder="Price" className="w-full border p-2" />
 
-        <input
-          name="category"
-          value={form.category}
-          onChange={handleChange}
-          placeholder="Category"
-          className="w-full border p-2"
-        />
+        <select name="category" value={form.category} onChange={handleChange} className="w-full border p-2">
+          <option value="">Select Category</option>
+          <option value="anarkalis">Anarkalis</option>
+          <option value="kurtis">Kurtis</option>
+          <option value="lehengas">Lehengas</option>
+          <option value="pattu-sarees">Pattu-Sarees</option>
+          <option value="sarees">Sarees</option>
+        </select>
 
-        {/* FILE */}
-        <input
-          type="file"
-          onChange={handleFileChange}
-          className="w-full border p-2"
-        />
+        <input type="file" multiple onChange={handleFileChange} className="w-full border p-2" />
 
-        {/* URL */}
-        <input
-          type="text"
-          name="image"
-          placeholder="Or paste image URL"
-          onChange={handleChange}
-          className="w-full border p-2"
-        />
+        <input name="imageUrls" value={form.imageUrls} onChange={handleChange} placeholder="Image URLs" className="w-full border p-2" />
 
-        <textarea
-          name="description"
-          value={form.description}
-          onChange={handleChange}
-          placeholder="Description"
-          className="w-full border p-2"
-        />
+        <textarea name="description" value={form.description} onChange={handleChange} placeholder="Description" className="w-full border p-2" />
 
-        <button className="bg-pink-600 text-white px-6 py-2 rounded">
-          {editingId ? "Update Product" : "Add Product"}
-        </button>
+        <input name="fabric" value={form.fabric} onChange={handleChange} placeholder="Fabric" className="w-full border p-2" />
+        <input name="occasion" value={form.occasion} onChange={handleChange} placeholder="Occasion" className="w-full border p-2" />
+        <input name="pattern" value={form.pattern} onChange={handleChange} placeholder="Pattern" className="w-full border p-2" />
+        <input name="care" value={form.care} onChange={handleChange} placeholder="Care Instructions" className="w-full border p-2" />
+        <input name="origin" value={form.origin} onChange={handleChange} placeholder="Country of Origin" className="w-full border p-2" />
 
+        <div className="flex gap-3">
+          <button className="bg-pink-600 text-white px-6 py-2 rounded">
+            {editingId ? "Update Product" : "Add Product"}
+          </button>
+
+          {editingId && (
+            <button
+              type="button"
+              onClick={() => {
+                setEditingId(null);
+                setForm({
+                  name: "",
+                  price: "",
+                  category: "",
+                  images: [],
+                  imageUrls: "",
+                  description: "",
+                  fabric: "",
+                  occasion: "",
+                  pattern: "",
+                  care: "",
+                  origin: "",
+                });
+              }}
+              className="bg-gray-400 text-white px-4 py-2 rounded"
+            >
+              Cancel
+            </button>
+          )}
+        </div>
       </form>
 
       {/* PRODUCTS */}
       <h2 className="text-xl font-bold mt-10 mb-4">All Products</h2>
 
-      <div className="space-y-4">
-        {products.map((p) => (
-          <div
-            key={p._id}
-            className="flex items-center justify-between bg-white shadow-md rounded-lg p-4"
-          >
+      {products.map((p) => {
 
-            <div className="flex items-center gap-4">
+        const imageUrl =
+          p.images?.[0]?.startsWith("http")
+            ? p.images[0]
+            : p.images?.[0]
+            ? `http://localhost:5000/${p.images[0]}`
+            : "/no-image.png";
+
+        return (
+          <div key={p._id} className="flex justify-between items-center bg-white p-4 shadow rounded mb-4">
+
+            <div className="flex gap-4 items-center">
+
+              {/* CLICK IMAGE */}
               <img
-                src={p.image}
+                src={imageUrl}
                 alt={p.name}
-                className="w-20 h-20 object-cover rounded"
+                onClick={() => navigate(`/product/${p._id}`)}
+                onError={(e) => (e.target.src = "/no-image.png")}
+                className="w-24 h-24 object-cover rounded cursor-pointer"
               />
 
               <div>
-                <h3 className="font-semibold text-lg">{p.name}</h3>
+                {/* CLICK NAME */}
+                <h3
+                  className="cursor-pointer hover:underline"
+                  onClick={() => navigate(`/product/${p._id}`)}
+                >
+                  {p.name}
+                </h3>
+
                 <p>₹ {p.price}</p>
                 <p className="text-sm text-gray-400">{p.category}</p>
               </div>
             </div>
 
             <div className="flex gap-2">
+
               <button
-                onClick={() => handleEdit(p)}
-                className="bg-yellow-500 text-white px-4 py-2 rounded"
+                onClick={() => {
+                  setForm({
+                    name: p.name || "",
+                    price: p.price || "",
+                    category: p.category || "",
+                    description: p.description || "",
+                    imageUrls: "",
+                    images: [],
+                    fabric: p.fabric || "",
+                    occasion: p.occasion || "",
+                    pattern: p.pattern || "",
+                    care: p.care || "",
+                    origin: p.origin || "",
+                  });
+
+                  setEditingId(p._id);
+
+                  formRef.current?.scrollIntoView({
+                    behavior: "smooth",
+                  });
+                }}
+                className="bg-yellow-400 px-4 py-1 rounded"
               >
                 Edit
               </button>
 
               <button
                 onClick={() => deleteProduct(p._id)}
-                className="bg-red-500 text-white px-4 py-2 rounded"
+                className="bg-red-500 text-white px-4 py-1 rounded"
               >
                 Delete
               </button>
+
             </div>
-
           </div>
-        ))}
-      </div>
-
+        );
+      })}
     </div>
   );
 }

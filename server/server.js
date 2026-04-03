@@ -1,12 +1,12 @@
 import dotenv from "dotenv";
-dotenv.config({ path: "./.env" }); // ✅ IMPORTANT FIX
+dotenv.config(); // ✅ IMPORTANT FIX
 
 import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
 import productRoutes from "./routes/productRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
-
+import userRoutes from "./routes/userRoutes.js";
 
 const app = express();
 
@@ -14,6 +14,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use("/api/auth", authRoutes);
+app.use("/api/user", userRoutes);
 // ✅ routes
 app.use("/api/products", productRoutes);
 
