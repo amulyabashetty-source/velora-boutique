@@ -20,7 +20,7 @@ import CustomerCare from "./pages/CustomerCare";
 import Terms from "./pages/Terms";
 import Checkout from "./pages/Checkout";
 import OrderSuccess from "./pages/OrderSuccess";
-
+import ResetPassword from "./pages/ResetPassword";
 
 
 const isAuth = localStorage.getItem("token");
@@ -50,6 +50,7 @@ function App() {
         <Route path="/support" element={<CustomerCare />} />
         <Route path="/terms" element={<Terms />} />
         <Route path="/checkout" element={<Checkout />} />
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
         <Route path="/success" element={<OrderSuccess />} />
         <Route
           path="/admin"

@@ -3,24 +3,26 @@ import nodemailer from "nodemailer";
 const sendEmail = async (to, subject, html) => {
   try {
     const transporter = nodemailer.createTransport({
-      service: "gmail",
+      host: "smtp-relay.brevo.com",
+      port: 587,
+      secure: false,
       auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
+        user: process.env.BREVO_USER,
+        pass: process.env.BREVO_PASS,
       },
     });
 
     const info = await transporter.sendMail({
-      from: process.env.EMAIL_USER,
+      from: `"Velora Boutique" <${process.env.EMAIL_USER}>`,
       to,
       subject,
       html,
     });
 
-    console.log("✅ Message sent:", info.messageId);
+    console.log("✅ Email sent:", info.messageId);
 
   } catch (error) {
-    console.log("❌ FULL EMAIL ERROR:", error);
+    console.log("❌ EMAIL ERROR:", error);
     throw error;
   }
 };

@@ -145,6 +145,9 @@ function Admin() {
           <option value="lehengas">Lehengas</option>
           <option value="pattu-sarees">Pattu-Sarees</option>
           <option value="sarees">Sarees</option>
+          <option value="accessories">Accessories</option>
+          <option value="handbag">Hand-Bag</option>
+          <option value="footwear">Footwear</option>
         </select>
 
         <input type="file" multiple onChange={handleFileChange} className="w-full border p-2" />

@@ -17,18 +17,25 @@ export const forgotPassword = async (req, res) => {
       return res.status(404).json({ msg: "User not found ❌" });
     }
 
-    // 🔐 generate token
-    const token = crypto.randomBytes(32).toString("hex");
+    // 🔐 generate raw token
+    const rawToken = crypto.randomBytes(32).toString("hex");
 
-    user.resetToken = token;
+    // 🔐 hash token (store in DB)
+    const hashedToken = crypto
+      .createHash("sha256")
+      .update(rawToken)
+      .digest("hex");
+
+    // 💾 save to DB
+    user.resetToken = hashedToken;
     user.resetTokenExpire = Date.now() + 10 * 60 * 1000; // 10 mins
 
     await user.save();
 
-    // 🔗 reset link
-    const resetLink = `http://localhost:5173/reset-password/${token}`;
+    // 🔗 send RAW token in email
+    const resetLink = `http://localhost:5173/reset-password/${rawToken}`;
 
-    // 📩 send email (UPDATED UI)
+    // 📩 send email
     await sendEmail(
       email,
       "Reset Your Password - Velora",
@@ -40,13 +47,14 @@ export const forgotPassword = async (req, res) => {
 
         <a href="${resetLink}" 
           style="
-            background-color:#ff4d6d;
+            background-color:#347736;
             color:white;
             padding:12px 20px;
             text-decoration:none;
             border-radius:5px;
             display:inline-block;
             margin-top:10px;
+            font-weight:bold;
           ">
           Reset Password
         </a>
@@ -73,6 +81,7 @@ export const forgotPassword = async (req, res) => {
 };
 
 
+
 // =======================
 // ✅ RESET PASSWORD
 // =======================
@@ -81,9 +90,15 @@ export const resetPassword = async (req, res) => {
     const { token } = req.params;
     const { password } = req.body;
 
-    // 🔍 find user by token
+    // 🔐 hash incoming token (IMPORTANT FIX)
+    const hashedToken = crypto
+      .createHash("sha256")
+      .update(token)
+      .digest("hex");
+
+    // 🔍 find user using hashed token
     const user = await User.findOne({
-      resetToken: token,
+      resetToken: hashedToken,
       resetTokenExpire: { $gt: Date.now() },
     });
 
@@ -91,11 +106,13 @@ export const resetPassword = async (req, res) => {
       return res.status(400).json({ msg: "Invalid or expired token ❌" });
     }
 
-    // 🔐 hash password
+    // 🔐 hash new password
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // ✅ update password
     user.password = hashedPassword;
+
+    // ❌ clear token
     user.resetToken = undefined;
     user.resetTokenExpire = undefined;
 

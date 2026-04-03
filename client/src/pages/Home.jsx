@@ -33,6 +33,50 @@ function Home() {
     }
   };
 
+  // ✅ CATEGORY DATA (UPDATED)
+  const categories = [
+    {
+      name: "Pattu Sarees",
+      path: "pattu-sarees",
+      img: "https://i.pinimg.com/1200x/6f/7f/c2/6f7fc2f96ad683990530b8cd520f263a.jpg",
+    },
+    {
+      name: "Lehengas",
+      path: "lehengas",
+      img: "https://i.pinimg.com/736x/f0/c1/34/f0c13469cbde90ca0862bcd62267976c.jpg",
+    },
+    {
+      name: "Kurtis",
+      path: "kurtis",
+      img: "https://i.pinimg.com/1200x/37/4e/2f/374e2fbb73a6025956bc6e8fae43bbf8.jpg",
+    },
+    {
+      name: "Anarkalis",
+      path: "anarkalis",
+      img: "https://i.pinimg.com/1200x/8c/de/8c/8cde8c372b6b676cbda30ecc7c07e394.jpg",
+    },
+    {
+      name: "Sarees",
+      path: "sarees",
+      img: "https://i.pinimg.com/736x/c1/0f/3a/c10f3aad7a4d128c2245b21a56775a72.jpg",
+    },
+    {
+      name: "Accessories",
+      path: "accessories",
+      img: "https://i.pinimg.com/1200x/5a/6a/c8/5a6ac8ddcc0c68aafb91017cf2bbbb63.jpg",
+    },
+     {
+      name: "HandBag",
+      path: "handbag",
+      img: "https://i.pinimg.com/1200x/25/d8/72/25d872e4e29e57f2f82e1784b6e9cab6.jpg",
+    },
+    {
+      name: "Footwear",
+      path: "footwear",
+      img: "https://i.pinimg.com/736x/e1/5a/df/e15adf5db088887dfc66a363129e3530.jpg",
+    },
+  ];
+
   const banners = [
     { id: 1, image: banner1, link: "/category/pattu-sarees" },
     { id: 2, image: banner2, link: "/category/anarkalis" },
@@ -73,33 +117,42 @@ function Home() {
             Sarees, Lehengas, Kurtis & More — Styled Just For You
           </p>
 
+          {/* ✅ FIXED BUTTON COLOR */}
           <button
             onClick={handleExplore}
-            className="bg-pink-600 text-white px-6 py-3 rounded-lg hover:bg-pink-700 hover:scale-105 transition"
+            className="bg-[#347736] text-white px-6 py-3 rounded-lg hover:bg-[#2e6330] hover:scale-105 transition"
           >
             Explore Collections
           </button>
         </div>
       </div>
 
-      {/* CATEGORIES */}
-      <div className="py-16 px-12">
+      {/* 🔥 CATEGORY SECTION (UPGRADED) */}
+      <div className="py-16 px-12 bg-[#f8f5f2]">
         <h2 className="text-3xl font-bold text-center mb-10">
           Shop By Category
         </h2>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-          {["pattu-sarees", "lehengas", "kurtis", "anarkalis", "sarees"].map(
-            (cat) => (
-              <div
-                key={cat}
-                onClick={() => navigate(`/category/${cat}`)}
-                className="bg-white p-6 text-center rounded-lg cursor-pointer hover:bg-[#f5f1eb] transition shadow-sm"
-              >
-                {cat}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+          {categories.map((cat) => (
+            <div
+              key={cat.path}
+              onClick={() => navigate(`/category/${cat.path}`)}
+              className="relative rounded-xl overflow-hidden cursor-pointer group"
+            >
+              <img
+                src={cat.img}
+                alt={cat.name}
+                className="w-full h-60 object-cover group-hover:scale-110 transition duration-300"
+              />
+
+              <div className="absolute inset-0 bg-black/50 group-hover:bg-black/30 transition flex items-center justify-center">
+                <h3 className="text-white text-lg font-semibold">
+                  {cat.name}
+                </h3>
               </div>
-            )
-          )}
+            </div>
+          ))}
         </div>
       </div>
 
@@ -128,7 +181,7 @@ function Home() {
         </Swiper>
       </div>
 
-      {/* 🔥 AJIO STYLE SECTIONS */}
+      {/* PRODUCT SECTIONS */}
       <Section title="Trending Sarees" items={sarees} getImage={getImage} />
       <Section title="Popular Kurtis" items={kurtis} getImage={getImage} />
       <Section title="New Lehengas" items={lehengas} getImage={getImage} />
@@ -136,7 +189,7 @@ function Home() {
   );
 }
 
-/* 🔥 BIG CARD + ARROW SECTION */
+/* 🔥 PRODUCT SLIDER SECTION */
 function Section({ title, items, getImage }) {
   const navigate = useNavigate();
   const scrollRef = useRef();
@@ -152,7 +205,6 @@ function Section({ title, items, getImage }) {
     <div className="px-12 mt-16 relative">
       <h2 className="text-3xl font-semibold mb-8">{title}</h2>
 
-      {/* LEFT */}
       <button
         onClick={() => scroll("left")}
         className="absolute left-6 top-1/2 -translate-y-1/2 z-10 
@@ -161,7 +213,6 @@ function Section({ title, items, getImage }) {
         ‹
       </button>
 
-      {/* RIGHT */}
       <button
         onClick={() => scroll("right")}
         className="absolute right-6 top-1/2 -translate-y-1/2 z-10 
@@ -170,7 +221,6 @@ function Section({ title, items, getImage }) {
         ›
       </button>
 
-      {/* PRODUCTS */}
       <div
         ref={scrollRef}
         className="flex gap-8 overflow-x-auto no-scrollbar scroll-smooth"
@@ -179,7 +229,7 @@ function Section({ title, items, getImage }) {
           <div
             key={p._id}
             onClick={() => navigate(`/product/${p._id}`)}
-            className="min-w-[260px] cursor-pointer group"
+            className="min-w-[280px] cursor-pointer group"
           >
             <div className="overflow-hidden rounded-lg">
               <img
@@ -192,7 +242,7 @@ function Section({ title, items, getImage }) {
               {p.name}
             </h3>
 
-            <p className="text-pink-600 font-semibold text-lg">
+            <p className="text-[#347736] font-semibold text-lg">
               ₹ {p.price}
             </p>
           </div>
