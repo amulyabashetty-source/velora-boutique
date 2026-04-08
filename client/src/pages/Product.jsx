@@ -27,8 +27,6 @@ function Product() {
 
     if (res.data?.images?.length > 0) {
       setSelectedImage(res.data.images[0]);
-    } else {
-      setSelectedImage(res.data.image);
     }
   };
 
@@ -43,25 +41,10 @@ function Product() {
     fetchAllProducts();
   }, [id]);
 
-  // AUTO SLIDER
-  useEffect(() => {
-    const slider = document.getElementById("slider");
-    if (!slider) return;
-
-    const interval = setInterval(() => {
-      slider.scrollBy({
-        left: 300,
-        behavior: "smooth",
-      });
-    }, 3000);
-
-    return () => clearInterval(interval);
-  }, [products]);
-
   if (!product) return <p className="p-10">Loading...</p>;
 
   const images =
-    product.images?.length > 0 ? product.images : [product.image];
+    product.images?.length > 0 ? product.images : [];
 
   const isWishlisted = wishlist.find((p) => p._id === product._id);
 
@@ -149,7 +132,7 @@ function Product() {
           </div>
 
           {/* BUTTONS */}
-          <div className="flex gap-4">
+          <div className="flex gap-4 mb-6">
             <button
               onClick={() => {
                 if (!selectedSize) {
@@ -171,6 +154,36 @@ function Product() {
               {isWishlisted ? "❤️ Wishlisted" : "🤍 Wishlist"}
             </button>
           </div>
+
+          {/* ⭐ PRODUCT DETAILS (NEW - AJIO STYLE) */}
+          <div className="border-t pt-4">
+            <h2 className="text-lg font-semibold mb-3">
+              Product Details
+            </h2>
+
+            <div className="grid grid-cols-2 gap-y-2 text-sm text-gray-700">
+
+              <p className="font-medium">Fabric</p>
+              <p>{product?.fabric || "-"}</p>
+
+              <p className="font-medium">Pattern</p>
+              <p>{product?.pattern || "-"}</p>
+
+              <p className="font-medium">Occasion</p>
+              <p>{product?.occasion || "-"}</p>
+
+              <p className="font-medium">Care</p>
+              <p>{product?.care || "-"}</p>
+
+              <p className="font-medium">Origin</p>
+              <p>{product?.origin || "-"}</p>
+
+              <p className="font-medium">Product Code</p>
+              <p>{product?._id?.slice(-10)}</p>
+
+            </div>
+          </div>
+
         </div>
       </div>
 
@@ -195,43 +208,12 @@ function Product() {
             Similar Styles
           </h2>
 
-          {/* LEFT ARROW */}
-          <button
-            onClick={() =>
-              document.getElementById("slider").scrollBy({
-                left: -300,
-                behavior: "smooth",
-              })
-            }
-            className="absolute left-2 top-1/2 -translate-y-1/2 z-10 
-                       bg-white/90 hover:bg-white shadow-md 
-                       p-2 rounded-full transition"
-          >
-            <span className="text-gray-700 text-lg">&#8592;</span>
-          </button>
-
-          {/* RIGHT ARROW */}
-          <button
-            onClick={() =>
-              document.getElementById("slider").scrollBy({
-                left: 300,
-                behavior: "smooth",
-              })
-            }
-            className="absolute right-2 top-1/2 -translate-y-1/2 z-10 
-                       bg-white/90 hover:bg-white shadow-md 
-                       p-2 rounded-full transition"
-          >
-            <span className="text-gray-700 text-lg">&#8594;</span>
-          </button>
-
-          {/* SLIDER */}
           <div
             id="slider"
-            className="flex gap-6 overflow-x-auto scroll-smooth no-scrollbar px-10"
+            className="flex gap-6 overflow-x-auto scroll-smooth no-scrollbar px-2"
           >
             {similarProducts.slice(0, 8).map((p) => {
-              const img = p.images?.[0] || p.image;
+              const img = p.images?.[0];
 
               return (
                 <div
