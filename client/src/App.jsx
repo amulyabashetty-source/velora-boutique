@@ -21,19 +21,24 @@ import Terms from "./pages/Terms";
 import Checkout from "./pages/Checkout";
 import OrderSuccess from "./pages/OrderSuccess";
 import ResetPassword from "./pages/ResetPassword";
-
-
-const isAuth = localStorage.getItem("token");
-
+import StylingPage from "./pages/StylingPage";
+import AddHairstyle from "./pages/AddHairstyle";
+import StyleResultPage from "./pages/StyleResultPage";
 function App() {
-  const location = useLocation(); // ⭐ current route
+  const location = useLocation();
 
-  const hideLayoutRoutes = ["/login", "/signup"]; // ⭐ routes to hide navbar/footer
+  const isAuth = localStorage.getItem("token");
+
+  // handle dynamic routes properly
+  const hideLayout =
+    location.pathname === "/login" ||
+    location.pathname === "/signup" ||
+    location.pathname.startsWith("/reset-password");
 
   return (
     <>
-      {/* ✅ Navbar */}
-      {!hideLayoutRoutes.includes(location.pathname) && <Navbar />}
+      {/* NAVBAR */}
+      {!hideLayout && <Navbar />}
 
       <Routes>
         <Route path="/" element={<Home />} />
@@ -52,14 +57,17 @@ function App() {
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
         <Route path="/success" element={<OrderSuccess />} />
+        <Route path="/style-match" element={<StylingPage />} />
+        <Route path="/style-result" element={<StyleResultPage />} />
+        <Route path="/add-hairstyle" element={<AddHairstyle />} />
         <Route
           path="/admin"
           element={isAuth ? <Admin /> : <Navigate to="/login" />}
         />
       </Routes>
 
-      {/* ✅ Footer */}
-      {!hideLayoutRoutes.includes(location.pathname) && <Footer />}
+      {/* FOOTER */}
+      {!hideLayout && <Footer />}
     </>
   );
 }

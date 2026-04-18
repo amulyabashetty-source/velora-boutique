@@ -6,7 +6,6 @@ export const useCart = () => useContext(CartContext);
 
 export const CartProvider = ({ children }) => {
 
-  // ✅ Load cart once (no blinking)
   const [cart, setCart] = useState(() => {
     try {
       const data = localStorage.getItem("cart");
@@ -16,10 +15,26 @@ export const CartProvider = ({ children }) => {
     }
   });
 
-  // ✅ Save cart
   useEffect(() => {
     localStorage.setItem("cart", JSON.stringify(cart));
   }, [cart]);
+
+  // ✅ FRONTEND SIZE LOGIC (NO BACKEND)
+  const getSizesByCategory = (category) => {
+    if (!category) return [];
+
+    const cat = category.toLowerCase();
+
+    if (["kurtis", "anarkalis", "lehengas"].includes(cat)) {
+      return ["S", "M", "L", "XL", "XXL"];
+    }
+
+    if (cat === "footwear") {
+      return ["6", "7", "8", "9", "10"];
+    }
+
+    return []; // sarees, accessories
+  };
 
   // ✅ ADD TO CART
   const addToCart = (product, size) => {
@@ -31,51 +46,54 @@ export const CartProvider = ({ children }) => {
       return;
     }
 
-    if (!size) {
+    // 🔥 FIXED (category based, not product.sizes)
+    const categorySizes = getSizesByCategory(product.category);
+    const requiresSize = categorySizes.length > 0;
+
+    if (requiresSize && !size) {
       alert("Please select size ❌");
       return;
     }
 
+    const finalSize = requiresSize ? size : null;
+
     setCart((prev) => {
       const existing = prev.find(
         (item) =>
-          item._id === product._id && item.size === size
+          item._id === product._id &&
+          item.size === finalSize
       );
 
       if (existing) {
         return prev.map((item) =>
-          item._id === product._id && item.size === size
+          item._id === product._id &&
+          item.size === finalSize
             ? { ...item, qty: item.qty + 1 }
             : item
         );
       }
 
-      // 🔥 FIX IMAGE (handles array + single + windows path)
       const imageToStore =
-        product.images && product.images.length > 0
-          ? product.images[0]
-          : product.image || "";
+        product.images?.[0] || product.image || "";
 
-      let fixedImage = "";
-
-      if (imageToStore) {
-        const cleanPath = imageToStore.replace(/\\/g, "/"); // ⭐ IMPORTANT
-
-        fixedImage = cleanPath.startsWith("http")
-          ? cleanPath
-          : `http://localhost:5000/${cleanPath}`;
-      }
+      const fixedImage = imageToStore
+        ? imageToStore.startsWith("http")
+          ? imageToStore
+          : `http://localhost:5000/${imageToStore.replace(/\\/g, "/")}`
+        : "";
 
       return [
         ...prev,
         {
           ...product,
           image: fixedImage,
-          size,
+          size: finalSize,
           qty: 1,
         },
       ];
     });
+
+    alert("Product added to cart ✅");
   };
 
   // ✅ REMOVE
@@ -101,6 +119,7 @@ export const CartProvider = ({ children }) => {
     );
   };
 
+  // ✅ CLEAR
   const clearCart = () => setCart([]);
 
   return (

@@ -8,10 +8,12 @@ function ResetPassword() {
 
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
 
   const handleReset = async () => {
     if (!password) {
-      alert("Please enter password");
+      setError("Please enter a new password");
       return;
     }
 
@@ -19,89 +21,63 @@ function ResetPassword() {
       setLoading(true);
 
       const res = await axios.post(
-        `http://localhost:5000/api/auth/reset-password/${token}`,
+        `http://localhost:5000/api/user/reset-password/${token}`,
         { password }
       );
 
-      alert(res.data.msg);
+      setMessage("Password updated successfully ✅");
+      setError("");
 
-      // ✅ redirect to login
-      navigate("/login");
+      // redirect after 2 sec
+      setTimeout(() => {
+        navigate("/login");
+      }, 2000);
 
-    } catch (error) {
-      console.log(error);
-      alert(error.response?.data?.msg || "Error occurred");
+    } catch (err) {
+      setError(err.response?.data?.msg || "Something went wrong ❌");
+      setMessage("");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div style={styles.container}>
-      <div style={styles.card}>
-        <h2 style={styles.title}>Reset Password</h2>
+    <div className="min-h-screen flex items-center justify-center bg-[#F7F5F2]">
 
-        <p style={styles.token}>
-          Token: {token.slice(0, 20)}...
-        </p>
+      <div className="bg-white p-8 rounded-2xl shadow-xl w-[350px] text-center">
+
+        <h2 className="text-xl font-semibold mb-4 text-[#2F4F2F]">
+          Reset Password
+        </h2>
+
+        {/* MESSAGE */}
+        {message && (
+          <p className="text-green-600 text-sm mb-2">{message}</p>
+        )}
+
+        {/* ERROR */}
+        {error && (
+          <p className="text-red-500 text-sm mb-2">{error}</p>
+        )}
 
         <input
           type="password"
           placeholder="Enter new password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          style={styles.input}
+          className="w-full border p-3 rounded-lg mb-4"
         />
 
-        <button style={styles.button} onClick={handleReset}>
+        <button
+          onClick={handleReset}
+          className="w-full bg-[#2F4F2F] text-white py-3 rounded-lg"
+        >
           {loading ? "Updating..." : "Update Password"}
         </button>
+
       </div>
     </div>
   );
 }
-
-const styles = {
-  container: {
-    height: "80vh",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#f8f5f2",
-  },
-  card: {
-    background: "#fff",
-    padding: "40px",
-    borderRadius: "12px",
-    boxShadow: "0 5px 20px rgba(0,0,0,0.1)",
-    width: "350px",
-    textAlign: "center",
-  },
-  title: {
-    marginBottom: "10px",
-  },
-  token: {
-    fontSize: "12px",
-    color: "gray",
-    marginBottom: "20px",
-  },
-  input: {
-    width: "100%",
-    padding: "10px",
-    marginBottom: "15px",
-    borderRadius: "6px",
-    border: "1px solid #ccc",
-  },
-  button: {
-    width: "100%",
-    padding: "12px",
-    backgroundColor: "#347736", 
-    color: "#fff",
-    border: "none",
-    borderRadius: "6px",
-    cursor: "pointer",
-    fontWeight: "bold",
-  },
-};
 
 export default ResetPassword;

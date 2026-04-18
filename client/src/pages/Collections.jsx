@@ -25,32 +25,43 @@ function Collections() {
   ];
 
   return (
-    <div className="py-16 px-10">
+    <div className="py-16 px-6 md:px-12 bg-[#f9f7f4]">
+      
       <h1 className="text-4xl font-bold text-center mb-12">
         Explore Collections
       </h1>
 
-      <div className="grid md:grid-cols-3 gap-8">
+      <div className="grid md:grid-cols-3 gap-10">
         {collections.map((item, index) => (
           <div
             key={index}
             onClick={() => navigate(item.link)}
             className="cursor-pointer group"
           >
-            <div className="overflow-hidden rounded-xl shadow-md">
+
+            {/* IMAGE CARD */}
+            <div className="relative overflow-hidden rounded-xl shadow-md">
+
               <img
                 src={item.image}
                 alt={item.title}
-                className="h-[300px] w-full object-cover group-hover:scale-110 transition duration-300"
+                className="w-full h-[350px] object-cover object-top transition duration-500 group-hover:scale-110"
               />
+
+              {/* OVERLAY EFFECT */}
+              <div className="absolute inset-0 bg-black/10 group-hover:bg-black/20 transition"></div>
+
             </div>
 
-            <h2 className="text-xl font-semibold mt-4 text-center">
+            {/* TITLE */}
+            <h2 className="text-xl font-semibold mt-4 text-center tracking-wide">
               {item.title}
             </h2>
+
           </div>
         ))}
       </div>
+
     </div>
   );
 }

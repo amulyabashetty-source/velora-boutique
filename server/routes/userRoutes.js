@@ -3,18 +3,32 @@ import User from "../models/User.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
+import {
+  forgotPassword,
+  resetPassword,
+} from "../controllers/authController.js";
+
 const router = express.Router();
 
-// ✅ REGISTER USER
-// ✅ REGISTER USER
+
+// =======================
+// REGISTER
+// =======================
 router.post("/register", async (req, res) => {
   try {
-    const { name, email, password, phone } = req.body; // ⭐ ADD phone
+    let { name, email, password, phone } = req.body;
+
+    if (!name || !email || !password) {
+      return res.status(400).json({ message: "All fields required" });
+    }
+
+    // normalize email
+    email = email.toLowerCase().trim();
 
     const existing = await User.findOne({ email });
 
     if (existing) {
-      return res.status(400).json({ message: "User already exists ❌" });
+      return res.status(400).json({ message: "User already exists" });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -23,35 +37,44 @@ router.post("/register", async (req, res) => {
       name,
       email,
       password: hashedPassword,
-      phone // ⭐ ADD THIS
+      phone,
     });
 
     await user.save();
 
-    res.json({ message: "User registered ✅" });
+    res.json({ message: "User registered successfully" });
 
   } catch (err) {
-    console.log("REGISTER ERROR:", err); // ⭐ DEBUG
-    res.status(500).json(err);
+    console.log("REGISTER ERROR:", err);
+    res.status(500).json({ message: "Server error" });
   }
 });
 
 
-// ✅ LOGIN USER
+// =======================
+// LOGIN
+// =======================
 router.post("/login", async (req, res) => {
   try {
-    const { email, password } = req.body;
+    let { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ message: "Enter email & password" });
+    }
+
+    // normalize email
+    email = email.toLowerCase().trim();
 
     const user = await User.findOne({ email });
 
     if (!user) {
-      return res.status(400).json({ message: "Invalid email ❌" });
+      return res.status(400).json({ message: "Invalid email" });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
-      return res.status(400).json({ message: "Wrong password ❌" });
+      return res.status(400).json({ message: "Wrong password" });
     }
 
     const token = jwt.sign(
@@ -63,15 +86,31 @@ router.post("/login", async (req, res) => {
     res.json({
       token,
       user: {
+        _id: user._id,
         name: user.name,
         email: user.email,
-        isAdmin: user.isAdmin
-      }
+        phone: user.phone,
+        isAdmin: user.isAdmin || false,
+      },
     });
 
   } catch (err) {
-    res.status(500).json(err);
+    console.log("LOGIN ERROR:", err);
+    res.status(500).json({ message: "Server error" });
   }
 });
+
+
+// =======================
+// FORGOT PASSWORD
+// =======================
+router.post("/forgot-password", forgotPassword);
+
+
+// =======================
+// RESET PASSWORD
+// =======================
+router.post("/reset-password/:token", resetPassword);
+
 
 export default router;

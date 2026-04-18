@@ -10,169 +10,214 @@ function Login() {
 
   const [form, setForm] = useState({
     email: "",
-    password: ""
+    password: "",
+    remember: false,
   });
 
   const [showPassword, setShowPassword] = useState(false);
 
+  const [showModal, setShowModal] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState("");
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
+
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value, type, checked } = e.target;
+    setForm({
+      ...form,
+      [name]: type === "checkbox" ? checked : value,
+    });
   };
 
   const handleLogin = async (e) => {
     e.preventDefault();
 
+    if (!form.email || !form.password) {
+      setError("Please fill all fields");
+      return;
+    }
+
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/user/login",
-        form
+        "http://localhost:5000/api/users/login",   // ✅ FIXED ROUTE
+        {
+          email: form.email,
+          password: form.password,
+        }
       );
 
+      // ✅ STORE ONLY IN localStorage
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("user", JSON.stringify(res.data.user));
 
-      navigate("/");
+      navigate("/profile");   // ✅ go to profile
+
     } catch {
-      alert("Login failed ❌");
+      setError("Invalid email or password");
+    }
+  };
+
+  const handleForgotPassword = async () => {
+    try {
+      await axios.post(
+        "http://localhost:5000/api/users/forgot-password",  // ✅ FIXED ROUTE
+        {
+          email: forgotEmail,
+        }
+      );
+
+      setMessage("Reset link sent to your email");
+      setError("");
+    } catch {
+      setError("User not found");
+      setMessage("");
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#F7F5F2]">
+      <div className="flex w-[900px] rounded-2xl overflow-hidden shadow-xl bg-white">
 
-      {/* MAIN CARD */}
-      <div className="flex w-[900px] rounded-2xl overflow-hidden shadow-xl bg-white animate-fadeIn">
-
-        {/* LEFT IMAGE */}
-        <div className="w-1/2 h-[520px] relative">
-          <img
-            src={hero}
-            alt="fashion"
-            className="w-full h-full object-cover object-center"
-          />
-
-          {/* OVERLAY TEXT */}
-          <div className="absolute bottom-6 left-6 text-white">
-            <h2 className="text-2xl font-semibold">Welcome Back</h2>
-            <p className="text-sm opacity-80">
-              Discover elegance. Shop your style.
-            </p>
-          </div>
+        {/* LEFT */}
+        <div className="w-1/2 h-[520px]">
+          <img src={hero} className="w-full h-full object-cover" />
         </div>
 
-        {/* RIGHT FORM */}
+        {/* RIGHT */}
         <div className="w-1/2 flex items-center justify-center">
-
           <div className="w-[80%]">
 
-            {/* LOGO */}
             <div className="flex justify-center mb-4">
-              <img src={logo} alt="Velora" className="w-16" />
+              <img src={logo} className="w-16" />
             </div>
 
-            <h2 className="text-xl font-semibold text-center mb-6 text-[#2F4F2F]">
-              Login to your account
+            <h2 className="text-xl font-semibold text-center mb-4">
+              Welcome Back
             </h2>
+
+            {error && (
+              <p className="text-red-500 text-sm text-center mb-2">
+                {error}
+              </p>
+            )}
 
             <form onSubmit={handleLogin}>
 
-              {/* EMAIL */}
               <input
                 type="email"
                 name="email"
                 placeholder="Email"
                 onChange={handleChange}
-                className="w-full border p-3 mb-3 rounded-lg outline-none focus:ring-2 focus:ring-[#2F4F2F]/30"
+                className="w-full border p-3 mb-3 rounded-lg"
               />
 
-              {/* PASSWORD */}
-              <div className="relative mb-2">
+              <div className="relative mb-3">
                 <input
                   type={showPassword ? "text" : "password"}
                   name="password"
                   placeholder="Password"
                   onChange={handleChange}
-                  className="w-full border p-3 rounded-lg outline-none focus:ring-2 focus:ring-[#2F4F2F]/30"
+                  className="w-full border p-3 rounded-lg"
                 />
 
                 <span
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-3 cursor-pointer text-gray-500"
+                  className="absolute right-3 top-3 cursor-pointer"
                 >
                   {showPassword ? <FaEyeSlash /> : <FaEye />}
                 </span>
               </div>
 
-              {/* REMEMBER + FORGOT */}
               <div className="flex justify-between items-center text-sm mb-4">
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input type="checkbox" />
+
+                <label className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    name="remember"
+                    onChange={handleChange}
+                  />
                   Remember me
                 </label>
 
                 <span
                   className="text-[#2F4F2F] cursor-pointer"
-                  onClick={() => alert("Forgot password later 🔐")}
+                  onClick={() => setShowModal(true)}
                 >
-                  Forgot?
+                  Forgot Password?
                 </span>
               </div>
 
-              {/* LOGIN BUTTON */}
-              <button className="w-full bg-[#2F4F2F] text-white py-3 rounded-lg hover:scale-[1.02] hover:shadow-md transition duration-300">
+              <button className="w-full bg-[#2F4F2F] text-white py-3 rounded-lg mb-3">
                 Login
               </button>
 
             </form>
 
-            {/* GOOGLE BUTTON */}
-            <div className="mt-4">
-              <button className="w-full border py-3 rounded-lg flex items-center justify-center gap-2 hover:bg-gray-50 transition">
-                <img
-                  src="https://www.svgrepo.com/show/475656/google-color.svg"
-                  alt="google"
-                  className="w-5 h-5"
-                />
-                Continue with Google
-              </button>
-            </div>
-
-            {/* NAVIGATION */}
-            <p className="text-sm text-center mt-4">
+            <p className="text-center text-sm">
               Don’t have an account?{" "}
               <span
-                onClick={() => navigate("/signup")}
                 className="text-[#2F4F2F] cursor-pointer font-medium"
+                onClick={() => navigate("/signup")}
               >
-                Signup
+                Sign Up
               </span>
             </p>
 
           </div>
         </div>
-
       </div>
 
-      {/* ANIMATION */}
-      <style>
-        {`
-          .animate-fadeIn {
-            animation: fadeIn 0.6s ease-in-out;
-          }
+      {/* MODAL */}
+      {showModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
 
-          @keyframes fadeIn {
-            from {
-              opacity: 0;
-              transform: translateY(20px);
-            }
-            to {
-              opacity: 1;
-              transform: translateY(0);
-            }
-          }
-        `}
-      </style>
+          <div className="bg-white p-6 rounded-xl w-[350px] shadow-xl">
 
+            <h2 className="text-lg font-semibold mb-3 text-center">
+              Forgot Password
+            </h2>
+
+            <input
+              type="email"
+              placeholder="Enter your registered email"
+              value={forgotEmail}
+              onChange={(e) => setForgotEmail(e.target.value)}
+              className="w-full border p-3 rounded-lg mb-3"
+            />
+
+            {message && (
+              <p className="text-green-600 text-sm text-center">
+                {message}
+              </p>
+            )}
+
+            {error && (
+              <p className="text-red-500 text-sm text-center">
+                {error}
+              </p>
+            )}
+
+            <div className="flex justify-between mt-3">
+
+              <button
+                onClick={() => setShowModal(false)}
+                className="px-4 py-2 bg-gray-300 rounded-lg"
+              >
+                Cancel
+              </button>
+
+              <button
+                onClick={handleForgotPassword}
+                className="px-4 py-2 bg-[#2F4F2F] text-white rounded-lg"
+              >
+                Send Link
+              </button>
+
+            </div>
+
+          </div>
+        </div>
+      )}
     </div>
   );
 }

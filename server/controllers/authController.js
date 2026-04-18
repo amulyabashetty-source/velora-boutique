@@ -5,39 +5,41 @@ import sendEmail from "../utils/sendEmail.js";
 
 
 // =======================
-// ✅ FORGOT PASSWORD
+// FORGOT PASSWORD
 // =======================
 export const forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
 
-    // 🔍 check user
-    const user = await User.findOne({ email });
+    // normalize email
+    const cleanEmail = email.toLowerCase().trim();
+
+    // check user
+    const user = await User.findOne({ email: cleanEmail });
+
     if (!user) {
-      return res.status(404).json({ msg: "User not found ❌" });
+      return res.status(404).json({ msg: "User not found" });
     }
 
-    // 🔐 generate raw token
+    // generate raw token
     const rawToken = crypto.randomBytes(32).toString("hex");
 
-    // 🔐 hash token (store in DB)
+    // hash token
     const hashedToken = crypto
       .createHash("sha256")
       .update(rawToken)
       .digest("hex");
 
-    // 💾 save to DB
+    // save to DB
     user.resetToken = hashedToken;
-    user.resetTokenExpire = Date.now() + 10 * 60 * 1000; // 10 mins
+    user.resetTokenExpire = Date.now() + 10 * 60 * 1000;
 
     await user.save();
 
-    // 🔗 send RAW token in email
     const resetLink = `http://localhost:5173/reset-password/${rawToken}`;
 
-    // 📩 send email
     await sendEmail(
-      email,
+      user.email,
       "Reset Your Password - Velora",
       `
       <div style="font-family: Arial; padding: 20px;">
@@ -72,56 +74,49 @@ export const forgotPassword = async (req, res) => {
       `
     );
 
-    res.json({ msg: "Reset link sent to email ✅" });
+    res.json({ msg: "Reset link sent to email" });
 
   } catch (err) {
-    console.log("❌ Forgot password error:", err);
-    res.status(500).json({ msg: "Server error ❌" });
+    console.log("Forgot password error:", err);
+    res.status(500).json({ msg: "Server error" });
   }
 };
 
 
-
 // =======================
-// ✅ RESET PASSWORD
+// RESET PASSWORD
 // =======================
 export const resetPassword = async (req, res) => {
   try {
     const { token } = req.params;
     const { password } = req.body;
 
-    // 🔐 hash incoming token (IMPORTANT FIX)
     const hashedToken = crypto
       .createHash("sha256")
       .update(token)
       .digest("hex");
 
-    // 🔍 find user using hashed token
     const user = await User.findOne({
       resetToken: hashedToken,
       resetTokenExpire: { $gt: Date.now() },
     });
 
     if (!user) {
-      return res.status(400).json({ msg: "Invalid or expired token ❌" });
+      return res.status(400).json({ msg: "Invalid or expired token" });
     }
 
-    // 🔐 hash new password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // ✅ update password
     user.password = hashedPassword;
-
-    // ❌ clear token
     user.resetToken = undefined;
     user.resetTokenExpire = undefined;
 
     await user.save();
 
-    res.json({ msg: "Password updated successfully ✅" });
+    res.json({ msg: "Password updated successfully" });
 
   } catch (err) {
-    console.log("❌ Reset password error:", err);
-    res.status(500).json({ msg: "Server error ❌" });
+    console.log("Reset password error:", err);
+    res.status(500).json({ msg: "Server error" });
   }
 };

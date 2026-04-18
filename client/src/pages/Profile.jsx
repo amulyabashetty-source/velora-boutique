@@ -6,14 +6,13 @@ function Profile() {
 
   const user = JSON.parse(localStorage.getItem("user"));
 
-  // ✅ FIX: Redirect safely
+  // ✅ Redirect if not logged in
   useEffect(() => {
     if (!user) {
       navigate("/login");
     }
   }, [user, navigate]);
 
-  // Prevent crash before redirect
   if (!user) return null;
 
   const handleLogout = () => {
@@ -22,7 +21,6 @@ function Profile() {
     navigate("/login");
   };
 
-  // ✅ Get initials
   const getInitials = (name) => {
     return name
       ?.split(" ")
@@ -31,7 +29,6 @@ function Profile() {
       .toUpperCase();
   };
 
-  // ✅ Menu items with navigation
   const menuItems = [
     { name: "Orders", path: "/orders" },
     { name: "Customer Care", path: "/support" },
@@ -47,50 +44,42 @@ function Profile() {
         My Account
       </div>
 
-      {/* PROFILE CARD */}
-      <div className="bg-[#EDE8E1] p-5 flex items-center gap-4">
+      {/* PROFILE */}
+      <div className="bg-[#EDE8E1] p-6 flex items-center gap-4">
 
-        {/* AVATAR */}
-        <div className="w-16 h-16 bg-[#2F4F2F] text-white flex items-center justify-center rounded-full text-xl font-semibold shadow-md border-2 border-white">
+        <div className="w-16 h-16 bg-[#2F4F2F] text-white flex items-center justify-center rounded-full text-xl font-semibold">
           {getInitials(user.name)}
         </div>
 
-        {/* USER INFO */}
         <div>
           <p className="font-semibold text-lg">{user.name}</p>
-          <p className="text-gray-600 text-sm">{user.email}</p>
-          {user.phone && (
-            <p className="text-gray-600 text-sm">{user.phone}</p>
-          )}
+          <p className="text-gray-600">{user.email}</p>
         </div>
       </div>
 
-      {/* MENU LIST */}
+      {/* MENU */}
       <div className="bg-white mt-2">
-
         {menuItems.map((item, i) => (
           <div
             key={i}
             onClick={() => navigate(item.path)}
-            className="flex justify-between items-center px-5 py-4 border-b cursor-pointer hover:bg-gray-50 transition"
+            className="flex justify-between px-5 py-4 border-b cursor-pointer hover:bg-gray-50"
           >
-            <span className="text-gray-700">{item.name}</span>
-            <span className="text-gray-400 text-lg">›</span>
+            {item.name}
+            <span>›</span>
           </div>
         ))}
-
       </div>
 
       {/* LOGOUT */}
       <div className="p-5">
         <button
           onClick={handleLogout}
-          className="w-full border border-[#2F4F2F] text-[#2F4F2F] py-3 rounded-lg hover:bg-[#2F4F2F] hover:text-white transition"
+          className="w-full bg-[#2F4F2F] text-white py-3 rounded hover:bg-[#244024]"
         >
           Logout
         </button>
       </div>
-
     </div>
   );
 }
