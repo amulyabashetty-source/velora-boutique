@@ -27,7 +27,7 @@ const questions = [
 function StylingPage() {
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState({});
-  const navigate = useNavigate(); // ✅ ADD THIS
+  const navigate = useNavigate(); 
 
   const current = questions[step];
 
@@ -40,8 +40,6 @@ function StylingPage() {
       setStep(step + 1);
     } else {
       console.log("Final Answers:", answers);
-
-      // ✅ THIS IS THE IMPORTANT FIX
       navigate("/style-result", {
         state: answers,
       });

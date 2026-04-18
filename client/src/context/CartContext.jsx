@@ -5,7 +5,6 @@ const CartContext = createContext();
 export const useCart = () => useContext(CartContext);
 
 export const CartProvider = ({ children }) => {
-
   const [cart, setCart] = useState(() => {
     try {
       const data = localStorage.getItem("cart");
@@ -19,7 +18,7 @@ export const CartProvider = ({ children }) => {
     localStorage.setItem("cart", JSON.stringify(cart));
   }, [cart]);
 
-  // ✅ FRONTEND SIZE LOGIC (NO BACKEND)
+  // FRONTEND SIZE LOGIC (NO BACKEND)
   const getSizesByCategory = (category) => {
     if (!category) return [];
 
@@ -36,9 +35,8 @@ export const CartProvider = ({ children }) => {
     return []; // sarees, accessories
   };
 
-  // ✅ ADD TO CART
+  //  ADD TO CART
   const addToCart = (product, size) => {
-
     const user = localStorage.getItem("user");
 
     if (!user) {
@@ -46,7 +44,7 @@ export const CartProvider = ({ children }) => {
       return;
     }
 
-    // 🔥 FIXED (category based, not product.sizes)
+    //  FIXED (category based, not product.sizes)
     const categorySizes = getSizesByCategory(product.category);
     const requiresSize = categorySizes.length > 0;
 
@@ -59,29 +57,24 @@ export const CartProvider = ({ children }) => {
 
     setCart((prev) => {
       const existing = prev.find(
-        (item) =>
-          item._id === product._id &&
-          item.size === finalSize
+        (item) => item._id === product._id && item.size === finalSize,
       );
 
       if (existing) {
         return prev.map((item) =>
-          item._id === product._id &&
-          item.size === finalSize
+          item._id === product._id && item.size === finalSize
             ? { ...item, qty: item.qty + 1 }
-            : item
+            : item,
         );
       }
 
-      const imageToStore =
-        product.images?.[0] || product.image || "";
+      const imageToStore = product.images?.[0] || product.image || "";
 
       const fixedImage = imageToStore
         ? imageToStore.startsWith("http")
           ? imageToStore
-          : `http://localhost:5000/${imageToStore.replace(/\\/g, "/")}`
+          : `${import.meta.env.VITE_API_URL}/${imageToStore.replace(/\\/g, "/")}`
         : "";
-
       return [
         ...prev,
         {
@@ -96,30 +89,25 @@ export const CartProvider = ({ children }) => {
     alert("Product added to cart ✅");
   };
 
-  // ✅ REMOVE
+  //  REMOVE
   const removeFromCart = (id, size) => {
     setCart((prev) =>
-      prev.filter(
-        (item) =>
-          !(item._id === id && item.size === size)
-      )
+      prev.filter((item) => !(item._id === id && item.size === size)),
     );
   };
 
-  // ✅ UPDATE QTY
+  //  UPDATE QTY
   const updateQty = (id, size, qty) => {
     if (qty < 1) return;
 
     setCart((prev) =>
       prev.map((item) =>
-        item._id === id && item.size === size
-          ? { ...item, qty }
-          : item
-      )
+        item._id === id && item.size === size ? { ...item, qty } : item,
+      ),
     );
   };
 
-  // ✅ CLEAR
+  //  CLEAR
   const clearCart = () => setCart([]);
 
   return (

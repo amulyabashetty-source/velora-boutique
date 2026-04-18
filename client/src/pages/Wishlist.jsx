@@ -15,16 +15,16 @@ function Wishlist() {
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {wishlist.map((item) => {
             
-            // ✅ IMAGE FIX (handles both backend + cloud links)
+            //  IMAGE FIX (handles both backend + cloud links)
             const imageUrl =
               item.images?.[0]?.startsWith("http")
                 ? item.images[0]
                 : item.images?.[0]
-                ? `http://localhost:5000/${item.images[0]}`
+                ? `${import.meta.env.VITE_API_URL}/${item.images[0]}`
                 : item.image?.startsWith("http")
                 ? item.image
                 : item.image
-                ? `http://localhost:5000/${item.image}`
+                ? `${import.meta.env.VITE_API_URL}/${item.image}`
                 : "/no-image.png";
 
             return (
@@ -33,7 +33,7 @@ function Wishlist() {
                 className="bg-white p-3 rounded shadow-sm hover:shadow-md transition"
               >
                 
-                {/* ✅ IMAGE CLICK */}
+                {/* IMAGE CLICK */}
                 <img
                   src={imageUrl}
                   alt={item.name}
@@ -42,7 +42,7 @@ function Wishlist() {
                   className="h-60 w-full object-cover rounded cursor-pointer"
                 />
 
-                {/* ✅ NAME CLICK */}
+                {/*  NAME CLICK */}
                 <h3
                   className="mt-2 text-sm font-medium cursor-pointer hover:underline"
                   onClick={() => navigate(`/product/${item._id}`)}
@@ -54,7 +54,7 @@ function Wishlist() {
                   ₹{item.price}
                 </p>
 
-                {/* ❌ REMOVE BUTTON */}
+                {/*  REMOVE BUTTON */}
                 <button
                   onClick={() => removeFromWishlist(item._id)}
                   className="mt-2 w-full bg-red-500 text-white py-1 rounded hover:bg-red-600"

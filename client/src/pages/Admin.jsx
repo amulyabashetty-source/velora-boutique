@@ -27,7 +27,7 @@ function Admin() {
 
   // FETCH PRODUCTS
   const fetchProducts = async () => {
-    const res = await axios.get("http://localhost:5000/api/products");
+    const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/products`);
     setProducts(res.data);
   };
 
@@ -71,22 +71,22 @@ function Admin() {
     try {
       if (editingId) {
         await axios.put(
-          `http://localhost:5000/api/products/${editingId}`,
+          `${import.meta.env.VITE_API_URL}/api/products/${editingId}`,
           formData,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
-        alert("Product Updated ✅");
+        alert("Product Updated ");
       } else {
         await axios.post(
-          "http://localhost:5000/api/products/add",
+         `${import.meta.env.VITE_API_URL}/api/products/add`,
           formData,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
-        alert("Product Added ✅");
+        alert("Product Added ");
       }
 
       setForm({
@@ -114,7 +114,7 @@ function Admin() {
 
   // DELETE
   const deleteProduct = async (id) => {
-    await axios.delete(`http://localhost:5000/api/products/${id}`, {
+    await axios.delete(`${import.meta.env.VITE_API_URL}/api/products/${id}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     fetchProducts();
@@ -203,7 +203,7 @@ function Admin() {
           p.images?.[0]?.startsWith("http")
             ? p.images[0]
             : p.images?.[0]
-            ? `http://localhost:5000/${p.images[0]}`
+            ? `${import.meta.env.VITE_API_URL}/${p.images[0]}`
             : "/no-image.png";
 
         return (

@@ -5,7 +5,7 @@ function Orders() {
 
   useEffect(() => {
     const data = JSON.parse(localStorage.getItem("orders")) || [];
-    setOrders(data.reverse()); // latest first
+    setOrders(data.reverse()); 
   }, []);
 
   return (

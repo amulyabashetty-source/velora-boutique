@@ -6,7 +6,7 @@ function Profile() {
 
   const user = JSON.parse(localStorage.getItem("user"));
 
-  // ✅ Redirect if not logged in
+  //  Redirect if not logged in
   useEffect(() => {
     if (!user) {
       navigate("/login");

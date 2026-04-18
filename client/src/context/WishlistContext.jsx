@@ -7,9 +7,9 @@ export const useWishlist = () => useContext(WishlistContext);
 
 export const WishlistProvider = ({ children }) => {
   const [wishlist, setWishlist] = useState([]);
-  const navigate = useNavigate(); // ⭐ for redirect
+  const navigate = useNavigate(); 
 
-  // ✅ Load
+  // Load
   useEffect(() => {
     try {
       const data = JSON.parse(localStorage.getItem("wishlist"));
@@ -19,12 +19,12 @@ export const WishlistProvider = ({ children }) => {
     }
   }, []);
 
-  // ✅ Save
+  //  Save
   useEffect(() => {
     localStorage.setItem("wishlist", JSON.stringify(wishlist));
   }, [wishlist]);
 
-  // ✅ PROTECTED TOGGLE
+  // PROTECTED TOGGLE
   const toggleWishlist = (product) => {
     const user = localStorage.getItem("user");
 

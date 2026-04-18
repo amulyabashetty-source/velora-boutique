@@ -26,7 +26,7 @@ function Cart() {
               {/* LEFT */}
               <div className="flex gap-4 items-center">
 
-                {/* ✅ IMAGE */}
+                {/*  IMAGE */}
                 <img
                   src={item.image ? item.image : "/no-image.png"}
                   alt={item.name}

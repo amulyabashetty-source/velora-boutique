@@ -16,13 +16,13 @@ function Address() {
     pincode: ""
   });
 
-  // ✅ Load addresses
+  //  Load addresses
   useEffect(() => {
     const data = JSON.parse(localStorage.getItem("addresses")) || [];
     setAddresses(data);
   }, []);
 
-  // ✅ Save addresses
+  //  Save addresses
   useEffect(() => {
     localStorage.setItem("addresses", JSON.stringify(addresses));
   }, [addresses]);

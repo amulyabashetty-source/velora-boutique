@@ -9,16 +9,16 @@ function Checkout() {
   const [addresses, setAddresses] = useState([]);
   const [selectedAddress, setSelectedAddress] = useState(null);
 
-  // ✅ Load addresses
+  //  Load addresses
   useEffect(() => {
     const data = JSON.parse(localStorage.getItem("addresses")) || [];
     setAddresses(data);
   }, []);
 
-  // ✅ Total
+  //  Total
   const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
 
-  // ✅ Place Order
+  // Place Order
   const handlePlaceOrder = () => {
     if (cart.length === 0) {
       alert("Cart is empty ❌");
@@ -35,7 +35,7 @@ function Checkout() {
   items: cart,
   address: selectedAddress,
   total,
-  paymentMethod,   // ⭐ ADD THIS
+  paymentMethod,   
   status: "Pending",
   date: new Date().toLocaleDateString(),
 };
@@ -48,8 +48,6 @@ function Checkout() {
 
     clearCart();
 
-clearCart();
-
 navigate("/success", {
   state: { orderId: newOrder.id }
 });
@@ -59,7 +57,7 @@ navigate("/success", {
     <div className="min-h-screen bg-[#F7F5F2] p-6">
       <h2 className="text-2xl font-semibold mb-6">Checkout</h2>
 
-      {/* 🛒 EMPTY CART */}
+      {/*  EMPTY CART */}
       {cart.length === 0 && (
         <div className="bg-white p-6 rounded-xl shadow-sm mb-6 text-center">
           <p className="text-gray-500 mb-3">Your cart is empty</p>
@@ -72,7 +70,7 @@ navigate("/success", {
         </div>
       )}
 
-      {/* 🧾 ORDER SUMMARY */}
+      {/* ORDER SUMMARY */}
       {cart.length > 0 && (
         <div className="bg-white p-5 rounded-xl shadow-sm mb-6">
           <h3 className="font-semibold mb-3">Order Summary</h3>
@@ -98,7 +96,7 @@ navigate("/success", {
         </div>
       )}
 
-      {/* 📍 ADDRESS */}
+      {/*  ADDRESS */}
       <div className="bg-white p-5 rounded-xl shadow-sm mb-6">
         <div className="flex justify-between items-center mb-3">
           <h3 className="font-semibold">Select Address</h3>
@@ -166,7 +164,7 @@ navigate("/success", {
         ))}
       </div>
 
-      {/* 🚀 PLACE ORDER */}
+      {/* PLACE ORDER */}
       <button
         onClick={handlePlaceOrder}
         disabled={cart.length === 0}

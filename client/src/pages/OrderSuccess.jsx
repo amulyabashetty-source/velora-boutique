@@ -11,7 +11,7 @@ function OrderSuccess() {
 
       <div className="bg-white p-8 rounded-xl shadow-md text-center w-[350px]">
 
-        {/* ✅ ICON */}
+        {/* ICON */}
         <div className="text-green-600 text-5xl mb-4">✔</div>
 
         {/* TITLE */}

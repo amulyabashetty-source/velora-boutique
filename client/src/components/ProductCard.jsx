@@ -12,8 +12,8 @@ function ProductCard({ product }) {
   const getImage = (img) => {
     if (!img) return "/no-image.png";
     return img.startsWith("http")
-      ? img
-      : `http://localhost:5000/${img}`;
+  ? img
+  : `${import.meta.env.VITE_API_URL}/${img}`;
   };
 
   const imageUrl = product.images?.[0];
@@ -24,7 +24,7 @@ function ProductCard({ product }) {
   return (
     <div className="bg-white rounded-2xl shadow-md hover:shadow-xl transition overflow-hidden relative group cursor-pointer">
 
-      {/* ❤️ Wishlist */}
+      {/*  Wishlist */}
       <button
         onClick={(e) => {
           e.stopPropagation();

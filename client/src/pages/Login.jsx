@@ -39,18 +39,18 @@ function Login() {
 
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/users/login",   // ✅ FIXED ROUTE
+  `${import.meta.env.VITE_API_URL}/api/users/login`,
         {
           email: form.email,
           password: form.password,
         }
       );
 
-      // ✅ STORE ONLY IN localStorage
+      //  STORE ONLY IN localStorage
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("user", JSON.stringify(res.data.user));
 
-      navigate("/profile");   // ✅ go to profile
+      navigate("/profile");   //  go to profile
 
     } catch {
       setError("Invalid email or password");
@@ -60,7 +60,7 @@ function Login() {
   const handleForgotPassword = async () => {
     try {
       await axios.post(
-        "http://localhost:5000/api/users/forgot-password",  // ✅ FIXED ROUTE
+  `${import.meta.env.VITE_API_URL}/api/users/forgot-password`,
         {
           email: forgotEmail,
         }

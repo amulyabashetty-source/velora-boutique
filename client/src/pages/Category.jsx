@@ -14,7 +14,9 @@ function Category() {
 
   useEffect(() => {
     const fetchProducts = async () => {
-      const res = await axios.get("http://localhost:5000/api/products");
+      const res = await axios.get(
+  `${import.meta.env.VITE_API_URL}/api/products`
+);
 
       const data = res.data.filter(
         (p) =>
@@ -54,7 +56,7 @@ function Category() {
         {name}
       </h2>
 
-      {/* 🔥 SIMPLE FILTER BAR */}
+      {/*  SIMPLE FILTER BAR */}
       <div className="flex gap-4 mb-6">
 
         {/* PRICE */}

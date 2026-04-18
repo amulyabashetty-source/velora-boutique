@@ -9,13 +9,13 @@ function StyleResultPage() {
   const [products, setProducts] = useState([]);
   const [selectedImage, setSelectedImage] = useState(null);
 
-  // ✅ Load Hairstyles from localStorage
+  //  Load Hairstyles from localStorage
   useEffect(() => {
     const data = JSON.parse(localStorage.getItem("hairstyles")) || [];
     setHairstyles(data);
   }, []);
 
-  // ✅ Load Products from Backend
+  // Load Products from Backend
   useEffect(() => {
     fetch("http://localhost:5000/api/products")
       .then((res) => res.json())
@@ -27,7 +27,7 @@ function StyleResultPage() {
 
   const { faceShape, occasion } = state;
 
-  // 🎯 Category Mapping
+  //  Category Mapping
   const categoryMap = {
     Wedding: ["sarees", "lehengas"],
     Daily: ["kurtis"],
@@ -37,19 +37,19 @@ function StyleResultPage() {
 
   const selectedCategories = categoryMap[occasion] || [];
 
-  // 👗 Filter Outfits
+  //  Filter Outfits
   const outfits = products.filter((p) =>
     selectedCategories.includes(p.category?.toLowerCase())
   );
 
-  // 💍 Accessories
+  //  Accessories
   const accessories = products.filter((p) =>
     ["accessories", "handbags", "footwear"].includes(
       p.category?.toLowerCase()
     )
   );
 
-  // 💇 Hairstyles
+  //  Hairstyles
   const filteredHair = hairstyles.filter(
     (h) => h.faceShape === faceShape
   );
@@ -57,7 +57,7 @@ function StyleResultPage() {
   return (
     <div className="bg-[#f3eee9] min-h-screen p-6">
 
-      {/* 🔝 HEADER */}
+      {/*  HEADER */}
       <div className="bg-white rounded-2xl p-5 shadow mb-10 flex justify-between items-center">
         <div>
           <p className="text-gray-600">
@@ -76,7 +76,7 @@ function StyleResultPage() {
         </button>
       </div>
 
-      {/* 👗 OUTFITS */}
+      {/*  OUTFITS */}
       <h2 className="text-2xl font-semibold mb-6 text-[#2f4f4f]">
         Recommended Outfits
       </h2>
@@ -114,7 +114,7 @@ function StyleResultPage() {
         )}
       </div>
 
-      {/* 💍 ACCESSORIES */}
+      {/*  ACCESSORIES */}
       <h2 className="text-xl font-semibold mb-4 text-[#2f4f4f]">
         Complete Your Look
       </h2>
@@ -143,7 +143,7 @@ function StyleResultPage() {
         )}
       </div>
 
-      {/* 💇 HAIRSTYLES */}
+      {/*  HAIRSTYLES */}
       <h2 className="text-xl font-semibold mb-4 text-[#2f4f4f]">
         Hairstyles for You
       </h2>
@@ -172,7 +172,7 @@ function StyleResultPage() {
         )}
       </div>
 
-      {/* 🔥 IMAGE MODAL */}
+      {/*  IMAGE MODAL */}
       {selectedImage && (
         <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
           <div className="relative">

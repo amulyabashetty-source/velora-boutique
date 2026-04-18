@@ -21,8 +21,8 @@ function ResetPassword() {
       setLoading(true);
 
       const res = await axios.post(
-        `http://localhost:5000/api/user/reset-password/${token}`,
-        { password }
+        `${import.meta.env.VITE_API_URL}/api/users/reset-password/${token}`,
+        { password },
       );
 
       setMessage("Password updated successfully ✅");
@@ -32,7 +32,6 @@ function ResetPassword() {
       setTimeout(() => {
         navigate("/login");
       }, 2000);
-
     } catch (err) {
       setError(err.response?.data?.msg || "Something went wrong ❌");
       setMessage("");
@@ -43,22 +42,16 @@ function ResetPassword() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#F7F5F2]">
-
       <div className="bg-white p-8 rounded-2xl shadow-xl w-[350px] text-center">
-
         <h2 className="text-xl font-semibold mb-4 text-[#2F4F2F]">
           Reset Password
         </h2>
 
         {/* MESSAGE */}
-        {message && (
-          <p className="text-green-600 text-sm mb-2">{message}</p>
-        )}
+        {message && <p className="text-green-600 text-sm mb-2">{message}</p>}
 
         {/* ERROR */}
-        {error && (
-          <p className="text-red-500 text-sm mb-2">{error}</p>
-        )}
+        {error && <p className="text-red-500 text-sm mb-2">{error}</p>}
 
         <input
           type="password"
@@ -74,7 +67,6 @@ function ResetPassword() {
         >
           {loading ? "Updating..." : "Update Password"}
         </button>
-
       </div>
     </div>
   );

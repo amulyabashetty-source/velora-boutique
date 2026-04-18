@@ -18,7 +18,7 @@ function Product() {
   const { wishlist, toggleWishlist } = useWishlist();
   const { addToCart } = useCart();
 
-  // ✅ FRONTEND SIZE LOGIC
+  //  FRONTEND SIZE LOGIC
   const getSizesByCategory = (category) => {
     if (!category) return [];
 
@@ -38,7 +38,7 @@ function Product() {
   useEffect(() => {
     const fetchProduct = async () => {
       const res = await axios.get(
-        `http://localhost:5000/api/products/${id}`
+        `${import.meta.env.VITE_API_URL}/api/products/${id}`,
       );
       setProduct(res.data);
       setMainImage(res.data.images?.[0] || res.data.image);
@@ -53,15 +53,14 @@ function Product() {
       if (!product) return;
 
       const res = await axios.get(
-        "http://localhost:5000/api/products"
+        `${import.meta.env.VITE_API_URL}/api/products`,
       );
 
       const filtered = res.data
         .filter(
           (p) =>
-            p.category?.toLowerCase() ===
-              product.category?.toLowerCase() &&
-            p._id !== product._id
+            p.category?.toLowerCase() === product.category?.toLowerCase() &&
+            p._id !== product._id,
         )
         .slice(0, 8);
 
@@ -73,33 +72,28 @@ function Product() {
 
   if (!product) return <p className="p-10">Loading...</p>;
 
-  const isWishlisted = wishlist.some(
-    (p) => p._id === product._id
-  );
+  const isWishlisted = wishlist.some((p) => p._id === product._id);
 
   const getImage = (img) => {
     if (!img) return "/no-image.png";
     return img.startsWith("http")
-      ? img
-      : `http://localhost:5000/${img}`;
+  ? img
+  : `${import.meta.env.VITE_API_URL}/${img}`;
   };
 
-  // ✅ NEW (replace backend sizes)
+  //  NEW (replace backend sizes)
   const sizes = getSizesByCategory(product.category);
   const requiresSize = sizes.length > 0;
 
   const category = (product.category || "").toLowerCase();
 
-  const imageStyle = ["footwear", "handbags", "accessories"].includes(
-    category
-  )
+  const imageStyle = ["footwear", "handbags", "accessories"].includes(category)
     ? "object-cover object-center w-full h-full"
     : "object-contain";
 
   return (
     <div className="px-10 py-10">
       <div className="grid md:grid-cols-2 gap-10">
-
         {/* LEFT */}
         <div className="flex gap-4">
           <div className="flex flex-col gap-3">
@@ -126,23 +120,17 @@ function Product() {
 
         {/* RIGHT */}
         <div>
-          <h1 className="text-2xl font-semibold">
-            {product.name}
-          </h1>
+          <h1 className="text-2xl font-semibold">{product.name}</h1>
 
           <p className="text-yellow-500 mt-2">★★★★★</p>
           <p className="text-gray-400 text-sm">0 reviews</p>
 
-          <h2 className="text-2xl font-bold mt-3">
-            ₹ {product.price}
-          </h2>
+          <h2 className="text-2xl font-bold mt-3">₹ {product.price}</h2>
 
-          {/* ✅ SIZE UI */}
+          {/*  SIZE UI */}
           {requiresSize && (
             <div className="mt-4">
-              <p className="text-sm font-medium mb-2">
-                Select Size
-              </p>
+              <p className="text-sm font-medium mb-2">Select Size</p>
 
               <div className="flex gap-2 flex-wrap">
                 {sizes.map((size) => (
@@ -150,9 +138,7 @@ function Product() {
                     key={size}
                     onClick={() => setSelectedSize(size)}
                     className={`px-4 py-2 border rounded ${
-                      selectedSize === size
-                        ? "bg-[#2F4F2F] text-white"
-                        : ""
+                      selectedSize === size ? "bg-[#2F4F2F] text-white" : ""
                     }`}
                   >
                     {size}
@@ -181,24 +167,30 @@ function Product() {
 
           {/* DETAILS */}
           <div className="mt-6">
-            <h3 className="font-semibold mb-3">
-              Product Details
-            </h3>
+            <h3 className="font-semibold mb-3">Product Details</h3>
 
             <div className="grid grid-cols-2 gap-4 text-sm">
-              <p><b>Fabric:</b> {product.fabric || "N/A"}</p>
-              <p><b>Pattern:</b> {product.pattern || "N/A"}</p>
-              <p><b>Occasion:</b> {product.occasion || "N/A"}</p>
-              <p><b>Care:</b> {product.care || "N/A"}</p>
-              <p><b>Origin:</b> {product.origin || "India"}</p>
+              <p>
+                <b>Fabric:</b> {product.fabric || "N/A"}
+              </p>
+              <p>
+                <b>Pattern:</b> {product.pattern || "N/A"}
+              </p>
+              <p>
+                <b>Occasion:</b> {product.occasion || "N/A"}
+              </p>
+              <p>
+                <b>Care:</b> {product.care || "N/A"}
+              </p>
+              <p>
+                <b>Origin:</b> {product.origin || "India"}
+              </p>
             </div>
           </div>
 
           {/* DESCRIPTION */}
           <div className="mt-6">
-            <h3 className="font-semibold mb-2">
-              Description
-            </h3>
+            <h3 className="font-semibold mb-2">Description</h3>
 
             <p className="text-gray-600 text-sm">
               {showFullDesc
@@ -208,14 +200,10 @@ function Product() {
 
             {product.description?.length > 120 && (
               <button
-                onClick={() =>
-                  setShowFullDesc(!showFullDesc)
-                }
+                onClick={() => setShowFullDesc(!showFullDesc)}
                 className="text-green-700 mt-2 text-sm"
               >
-                {showFullDesc
-                  ? "Show Less ▲"
-                  : "Read More ▼"}
+                {showFullDesc ? "Show Less ▲" : "Read More ▼"}
               </button>
             )}
           </div>
@@ -224,9 +212,7 @@ function Product() {
 
       {/* SIMILAR */}
       <div className="mt-16">
-        <h2 className="text-xl font-semibold mb-6">
-          Similar Styles
-        </h2>
+        <h2 className="text-xl font-semibold mb-6">Similar Styles</h2>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
           {similar.map((item) => (

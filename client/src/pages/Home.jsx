@@ -22,7 +22,7 @@ function Home() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/api/products")
+      .get(`${import.meta.env.VITE_API_URL}/api/products`)
       .then((res) => setProducts(res.data))
       .catch((err) => console.log(err));
   }, []);
@@ -92,7 +92,9 @@ function Home() {
 
   const getImage = (img) => {
     if (!img) return "/no-image.png";
-    return img.startsWith("http") ? img : `http://localhost:5000/${img}`;
+    return img.startsWith("http")
+  ? img
+  : `${import.meta.env.VITE_API_URL}/${img}`;
   };
 
   return (
@@ -221,7 +223,7 @@ function Home() {
         getImage={getImage}
       />
 
-      {/* 🔥 NEW BANNERS (CORRECT POSITION) */}
+      {/*  NEW BANNERS  */}
       <div className="px-12 mt-16">
         <h2 className="text-3xl font-bold text-center mb-6">New Collections</h2>
 

@@ -10,7 +10,7 @@ const ReviewForm = ({ productId, refreshProduct }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // ⚠️ Basic validation
+    //  Basic validation
     if (!user || !rating || !comment) {
       alert("All fields required");
       return;
@@ -18,7 +18,7 @@ const ReviewForm = ({ productId, refreshProduct }) => {
 
     try {
       await axios.post(
-        `http://localhost:5000/api/products/${productId}/review`,
+  `${import.meta.env.VITE_API_URL}/api/products/${productId}/review`,
         {
           user,
           rating,
@@ -26,12 +26,12 @@ const ReviewForm = ({ productId, refreshProduct }) => {
         }
       );
 
-      // ✅ Reset form
+      //  Reset form
       setUser("");
       setRating(0);
       setComment("");
 
-      // ✅ Refresh product data (important)
+      //  Refresh product data (important)
       refreshProduct();
 
     } catch (error) {

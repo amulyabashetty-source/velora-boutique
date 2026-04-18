@@ -11,7 +11,7 @@ function Signup() {
     name: "",
     email: "",
     phone: "",
-    password: ""
+    password: "",
   });
 
   const [message, setMessage] = useState("");
@@ -31,8 +31,8 @@ function Signup() {
 
     try {
       await axios.post(
-        "http://localhost:5000/api/user/register",
-        form
+        `${import.meta.env.VITE_API_URL}/api/users/register`,
+        form,
       );
 
       setMessage("Signup successful ✅");
@@ -49,15 +49,12 @@ function Signup() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#F7F5F2]">
-
       <div className="w-[850px] h-[520px] bg-white rounded-2xl shadow-xl flex overflow-hidden">
-
         <div className="w-1/2">
           <img src={hero1} className="w-full h-full object-cover" />
         </div>
 
         <div className="w-1/2 flex flex-col justify-center px-10">
-
           <div className="flex justify-center mb-4">
             <img src={logo} className="w-16" />
           </div>
@@ -118,7 +115,6 @@ function Signup() {
               Login
             </span>
           </p>
-
         </div>
       </div>
     </div>
