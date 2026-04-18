@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-
+// Review Schema
 const reviewSchema = new mongoose.Schema(
   {
     user: {
@@ -10,6 +10,8 @@ const reviewSchema = new mongoose.Schema(
     rating: {
       type: Number,
       required: true,
+      min: 1,
+      max: 5,
     },
     comment: {
       type: String,
@@ -19,16 +21,26 @@ const reviewSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-
+//  Product Schema
 const productSchema = new mongoose.Schema(
   {
-    name: String,
-    price: Number,
-    category: String,
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    price: {
+      type: Number,
+      required: true,
+    },
+    category: {
+      type: String,
+      required: true,
+      lowercase: true,
+      trim: true,
+    },
     description: String,
-    
 
-    
     images: [String],
 
     fabric: String,
@@ -38,6 +50,7 @@ const productSchema = new mongoose.Schema(
     origin: String,
 
     sizes: [String],
+
     reviews: [reviewSchema],
 
     averageRating: {

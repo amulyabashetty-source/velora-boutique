@@ -3,49 +3,54 @@ import Admin from "../models/Admin.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
-// ✅ IMPORT NEW CONTROLLERS
-import {
-  forgotPassword,
-  resetPassword,
-} from "../controllers/authController.js";
-
 const router = express.Router();
 
 // ➤ Register Admin
 router.post("/register", async (req, res) => {
   try {
-    const { email, password } = req.body;
+    let { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ message: "Email & password required" });
+    }
+
+    email = email.toLowerCase().trim();
+
+    const exists = await Admin.findOne({ email });
+    if (exists) {
+      return res.status(400).json({ message: "Admin already exists" });
+    }
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const admin = new Admin({
-      email,
-      password: hashedPassword,
-    });
-
+    const admin = new Admin({ email, password: hashedPassword });
     await admin.save();
 
-    res.json({ message: "Admin created ✅" });
+    res.json({ message: "Admin created" });
+
   } catch (err) {
-    res.status(500).json(err);
+    console.log("ADMIN REGISTER ERROR:", err);
+    res.status(500).json({ message: "Server error" });
   }
 });
 
 // ➤ Login Admin
 router.post("/login", async (req, res) => {
   try {
-    const { email, password } = req.body;
+    let { email, password } = req.body;
+
+    email = email.toLowerCase().trim();
 
     const admin = await Admin.findOne({ email });
 
     if (!admin) {
-      return res.status(400).json({ message: "Invalid email ❌" });
+      return res.status(400).json({ message: "Invalid email" });
     }
 
     const isMatch = await bcrypt.compare(password, admin.password);
 
     if (!isMatch) {
-      return res.status(400).json({ message: "Wrong password ❌" });
+      return res.status(400).json({ message: "Wrong password" });
     }
 
     const token = jwt.sign(
@@ -57,31 +62,9 @@ router.post("/login", async (req, res) => {
     res.json({ token });
 
   } catch (err) {
-    res.status(500).json(err);
+    console.log("ADMIN LOGIN ERROR:", err);
+    res.status(500).json({ message: "Server error" });
   }
 });
-
-// ❌ DELETE ADMIN
-router.delete("/delete/:email", async (req, res) => {
-  try {
-    const { email } = req.params;
-
-    const deleted = await Admin.findOneAndDelete({ email });
-
-    if (!deleted) {
-      return res.status(404).json({ message: "Admin not found ❌" });
-    }
-
-    res.json({ message: "Admin deleted ✅" });
-
-  } catch (err) {
-    res.status(500).json(err);
-  }
-});
-
-
-// ✅ NEW ROUTES (VERY IMPORTANT)
-router.post("/forgot-password", forgotPassword);
-router.post("/reset-password/:token", resetPassword);
 
 export default router;

@@ -6,8 +6,9 @@ import cloudinary from "../config/cloudinary.js";
 
 const router = express.Router();
 
-
-// ✅ ADD PRODUCT
+// =======================
+// ADD PRODUCT
+// =======================
 router.post(
   "/add",
   authMiddleware,
@@ -20,8 +21,6 @@ router.post(
         category,
         imageUrls,
         description,
-
-        // ✅ NEW FIELDS
         fabric,
         occasion,
         pattern,
@@ -29,10 +28,14 @@ router.post(
         origin,
       } = req.body;
 
+      if (!name || !price || !category) {
+        return res.status(400).json({ message: "Required fields missing" });
+      }
+
       let imageArray = [];
 
       // FILE UPLOAD
-      if (req.files && req.files.length > 0) {
+      if (req.files?.length > 0) {
         imageArray.push(...req.files.map((file) => file.path));
       }
 
@@ -56,8 +59,6 @@ router.post(
         category,
         description,
         images: imageArray,
-
-        // ✅ SAVE DETAILS
         fabric,
         occasion,
         pattern,
@@ -77,7 +78,9 @@ router.post(
 );
 
 
-// ✅ UPDATE PRODUCT
+// =======================
+// UPDATE PRODUCT
+// =======================
 router.put(
   "/:id",
   authMiddleware,
@@ -90,8 +93,6 @@ router.put(
         category,
         description,
         imageUrls,
-
-        // ✅ NEW FIELDS
         fabric,
         occasion,
         pattern,
@@ -101,7 +102,7 @@ router.put(
 
       let imageArray = [];
 
-      if (req.files && req.files.length > 0) {
+      if (req.files?.length > 0) {
         imageArray.push(...req.files.map((file) => file.path));
       }
 
@@ -119,8 +120,6 @@ router.put(
         price,
         category,
         description,
-
-        // ✅ IMPORTANT (YOU MISSED THIS BEFORE)
         fabric,
         occasion,
         pattern,
@@ -138,6 +137,10 @@ router.put(
         { new: true }
       );
 
+      if (!updated) {
+        return res.status(404).json({ message: "Product not found" });
+      }
+
       res.json(updated);
 
     } catch (error) {
@@ -148,17 +151,30 @@ router.put(
 );
 
 
-// ✅ GET ALL PRODUCTS
+// =======================
+// GET ALL PRODUCTS
+// =======================
 router.get("/", async (req, res) => {
-  const products = await Product.find().sort({ _id: -1 });
-  res.json(products);
+  try {
+    const products = await Product.find().sort({ _id: -1 });
+    res.json(products);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 });
 
 
-// ✅ GET SINGLE PRODUCT (IMPORTANT FOR PRODUCT PAGE)
+// =======================
+// GET SINGLE PRODUCT
+// =======================
 router.get("/:id", async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);
+
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
     res.json(product);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -166,16 +182,34 @@ router.get("/:id", async (req, res) => {
 });
 
 
-// ✅ DELETE PRODUCT
+// =======================
+// DELETE PRODUCT
+// =======================
 router.delete("/:id", authMiddleware, async (req, res) => {
-  await Product.findByIdAndDelete(req.params.id);
-  res.json({ message: "Deleted" });
+  try {
+    const deleted = await Product.findByIdAndDelete(req.params.id);
+
+    if (!deleted) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    res.json({ message: "Deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 });
 
-// ⭐ ADD REVIEW (NEW)
+
+// =======================
+// ADD REVIEW
+// =======================
 router.post("/:id/review", async (req, res) => {
   try {
     const { user, rating, comment } = req.body;
+
+    if (!user || !rating || !comment) {
+      return res.status(400).json({ message: "All fields required" });
+    }
 
     const product = await Product.findById(req.params.id);
 
@@ -183,17 +217,14 @@ router.post("/:id/review", async (req, res) => {
       return res.status(404).json({ message: "Product not found" });
     }
 
-    // ⭐ Create Review Object
     const newReview = {
       user,
       rating: Number(rating),
       comment,
     };
 
-    // ⭐ Push Review
     product.reviews.push(newReview);
 
-    // ⭐ Recalculate Average Rating
     const total = product.reviews.reduce(
       (sum, item) => sum + item.rating,
       0

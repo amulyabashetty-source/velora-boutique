@@ -22,7 +22,10 @@ router.post("/register", async (req, res) => {
       return res.status(400).json({ message: "All fields required" });
     }
 
-    // normalize email
+    if (password.length < 6) {
+      return res.status(400).json({ message: "Password must be at least 6 characters" });
+    }
+
     email = email.toLowerCase().trim();
 
     const existing = await User.findOne({ email });
@@ -62,7 +65,6 @@ router.post("/login", async (req, res) => {
       return res.status(400).json({ message: "Enter email & password" });
     }
 
-    // normalize email
     email = email.toLowerCase().trim();
 
     const user = await User.findOne({ email });

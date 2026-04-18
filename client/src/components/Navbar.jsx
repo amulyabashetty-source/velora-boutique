@@ -2,7 +2,7 @@ import logo from "../assets/logo.png";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 
-// ✅ React Icons
+//  React Icons
 import { FiSearch, FiArrowRight } from "react-icons/fi";
 
 function Navbar() {
@@ -13,7 +13,7 @@ function Navbar() {
   const [search, setSearch] = useState("");
   const [suggestions, setSuggestions] = useState([]);
 
-  // ✅ Categories (can later come from backend)
+  //  Categories (can later come from backend)
   const categories = [
     "Sarees",
     "Pattu Sarees",
@@ -25,13 +25,13 @@ function Navbar() {
     "Footwear",
   ];
 
-  // ✅ Check login state
+  //  Check login state
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem("user"));
     setUser(storedUser);
   }, [location.pathname]);
 
-  // 🔍 SEARCH LOGIC
+  //  SEARCH LOGIC
   const handleSearchChange = (e) => {
     const value = e.target.value;
     setSearch(value);
@@ -48,7 +48,7 @@ function Navbar() {
     setSuggestions(filtered);
   };
 
-  // 👉 Suggestion click
+  //  Suggestion click
   const handleSuggestionClick = (item) => {
     setSearch("");
     setSuggestions([]);
@@ -57,7 +57,7 @@ function Navbar() {
     navigate(`/category/${formatted}`);
   };
 
-  // 👉 Enter press
+  //  Enter press
   const handleSearchSubmit = (e) => {
     if (e.key === "Enter") {
       const formatted = search.toLowerCase().replace(/\s+/g, "");
@@ -66,7 +66,7 @@ function Navbar() {
     }
   };
 
-  // ✅ Scroll to categories
+  // Scroll to categories
   const handleCollectionsClick = () => {
     if (location.pathname !== "/") {
       navigate("/");
@@ -82,7 +82,7 @@ function Navbar() {
     }
   };
 
-  // ✅ Profile click
+  //  Profile click
   const handleProfileClick = () => {
     user ? navigate("/profile") : navigate("/login");
   };
@@ -90,12 +90,12 @@ function Navbar() {
   return (
     <nav className="bg-[#EDE8E1] shadow-sm px-10 py-3 flex items-center justify-between relative">
 
-      {/* 🔥 LOGO */}
+      {/* LOGO */}
       <Link to="/">
         <img src={logo} className="h-16" alt="logo" />
       </Link>
 
-      {/* 🔍 SEARCH BAR */}
+      {/* SEARCH BAR */}
       <div className="relative w-[420px]">
 
         {/* Search Box */}
@@ -114,7 +114,7 @@ function Navbar() {
           />
         </div>
 
-        {/* 🔥 SUGGESTIONS */}
+        {/* SUGGESTIONS */}
         {suggestions.length > 0 && (
           <div className="absolute top-14 left-0 w-full bg-white shadow-2xl rounded-xl overflow-hidden z-50 border border-gray-100">
 
@@ -136,7 +136,7 @@ function Navbar() {
         )}
       </div>
 
-      {/* 🔥 MENU */}
+      {/*MENU */}
       <ul className="flex gap-8 text-gray-700 font-medium items-center">
 
         <Link to="/" className="hover:text-[#2f4f4f] transition">

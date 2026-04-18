@@ -1,8 +1,13 @@
-import dotenv from "dotenv";
-dotenv.config({ path: "./.env" }); // ✅ ADD THIS
-
 import { v2 as cloudinary } from "cloudinary";
 
+
+if (
+  !process.env.CLOUD_NAME ||
+  !process.env.API_KEY ||
+  !process.env.API_SECRET
+) {
+  throw new Error("Cloudinary environment variables missing");
+}
 
 cloudinary.config({
   cloud_name: process.env.CLOUD_NAME,

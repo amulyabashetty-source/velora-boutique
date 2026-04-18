@@ -1,5 +1,10 @@
 import nodemailer from "nodemailer";
 
+// ✅ Validate ENV
+if (!process.env.BREVO_USER || !process.env.BREVO_PASS) {
+  throw new Error("Email credentials missing");
+}
+
 const sendEmail = async (to, subject, html) => {
   try {
     const transporter = nodemailer.createTransport({
@@ -19,10 +24,10 @@ const sendEmail = async (to, subject, html) => {
       html,
     });
 
-    console.log("✅ Email sent:", info.messageId);
+    console.log("Email sent:", info.messageId);
 
   } catch (error) {
-    console.log("❌ EMAIL ERROR:", error);
+    console.error("EMAIL ERROR:", error);
     throw error;
   }
 };
