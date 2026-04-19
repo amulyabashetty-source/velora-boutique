@@ -14,19 +14,23 @@ function Category() {
 
   useEffect(() => {
     const fetchProducts = async () => {
-      const res = await axios.get(
-  `${import.meta.env.VITE_API_URL}/api/products`
-);
+  const res = await axios.get(
+    `${import.meta.env.VITE_API_URL}/api/products`
+  );
 
-      const data = res.data.filter(
-        (p) =>
-          p.category?.toLowerCase().trim() ===
-          name.toLowerCase().trim()
-      );
+  const allProducts = Array.isArray(res.data)
+    ? res.data
+    : res.data.products || [];
 
-      setProducts(data);
-      setFiltered(data);
-    };
+  const data = allProducts.filter(
+    (p) =>
+      p.category?.toLowerCase().trim() ===
+      name.toLowerCase().trim()
+  );
+
+  setProducts(data);
+  setFiltered(data);
+};
 
     fetchProducts();
   }, [name]);

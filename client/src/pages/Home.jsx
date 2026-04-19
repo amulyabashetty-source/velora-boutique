@@ -23,7 +23,7 @@ function Home() {
   useEffect(() => {
     axios
       .get(`${import.meta.env.VITE_API_URL}/api/products`)
-      .then((res) => setProducts(res.data))
+      .then((res) => setProducts(res.data.products))
       .catch((err) => console.log(err));
   }, []);
 
@@ -88,7 +88,7 @@ function Home() {
     { img: banner8, path: "accessories" },
   ];
 
-  const filter = (cat) => products.filter((p) => p.category === cat);
+  const filter = (cat) => (products || []).filter((p) => p.category === cat);
 
   const getImage = (img) => {
     if (!img) return "/no-image.png";
