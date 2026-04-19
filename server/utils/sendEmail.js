@@ -1,6 +1,6 @@
 import nodemailer from "nodemailer";
 
-// ✅ Validate ENV
+//  Validate ENV
 if (!process.env.BREVO_USER || !process.env.BREVO_PASS) {
   throw new Error("Email credentials missing");
 }
