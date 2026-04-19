@@ -25,10 +25,26 @@ function Admin() {
 
   const token = localStorage.getItem("token");
 
-  // FETCH PRODUCTS
+  //  FIXED FETCH PRODUCTS
   const fetchProducts = async () => {
-    const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/products`);
-    setProducts(res.data);
+    try {
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/products`);
+
+      console.log("ADMIN API RESPONSE:", res.data);
+
+      if (Array.isArray(res.data)) {
+        setProducts(res.data);
+      } else if (Array.isArray(res.data.products)) {
+        setProducts(res.data.products);
+      } else {
+        console.error("Invalid API format:", res.data);
+        setProducts([]);
+      }
+
+    } catch (err) {
+      console.log(err);
+      setProducts([]);
+    }
   };
 
   useEffect(() => {
@@ -80,7 +96,7 @@ function Admin() {
         alert("Product Updated ");
       } else {
         await axios.post(
-         `${import.meta.env.VITE_API_URL}/api/products/add`,
+          `${import.meta.env.VITE_API_URL}/api/products/add`,
           formData,
           {
             headers: { Authorization: `Bearer ${token}` },
@@ -197,7 +213,8 @@ function Admin() {
       {/* PRODUCTS */}
       <h2 className="text-xl font-bold mt-10 mb-4">All Products</h2>
 
-      {products.map((p) => {
+      {/* ✅ SAFE MAP FIX */}
+      {Array.isArray(products) && products.map((p) => {
 
         const imageUrl =
           p.images?.[0]?.startsWith("http")
@@ -211,7 +228,6 @@ function Admin() {
 
             <div className="flex gap-4 items-center">
 
-              {/* CLICK IMAGE */}
               <img
                 src={imageUrl}
                 alt={p.name}
@@ -221,11 +237,7 @@ function Admin() {
               />
 
               <div>
-                {/* CLICK NAME */}
-                <h3
-                  className="cursor-pointer hover:underline"
-                  onClick={() => navigate(`/product/${p._id}`)}
-                >
+                <h3 className="cursor-pointer hover:underline" onClick={() => navigate(`/product/${p._id}`)}>
                   {p.name}
                 </h3>
 
