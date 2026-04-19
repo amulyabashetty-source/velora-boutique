@@ -21,11 +21,19 @@ function Home() {
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
-    axios
-      .get(`${import.meta.env.VITE_API_URL}/api/products`)
-      .then((res) => setProducts(res.data.products))
-      .catch((err) => console.log(err));
-  }, []);
+  axios
+    .get(`${import.meta.env.VITE_API_URL}/api/products`)
+    .then((res) => {
+      const data = Array.isArray(res.data)
+        ? res.data
+        : res.data.products || [];
+
+      console.log("Products:", data); // debug
+
+      setProducts(data);
+    })
+    .catch((err) => console.log(err));
+}, []);
 
   const handleExplore = () => {
     navigate("/collections");
@@ -92,6 +100,8 @@ function Home() {
   (products || []).filter((p) =>
     p.category?.toLowerCase().includes(cat.toLowerCase())
   );
+
+
   const getImage = (img) => {
     if (!img) return "/no-image.png";
     return img.startsWith("http")
