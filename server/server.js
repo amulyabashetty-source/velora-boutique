@@ -14,7 +14,7 @@ const app = express();
 // MIDDLEWARE
 app.use(
   cors({
-    origin: process.env.CLIENT_URL, 
+    origin: true, // allow all (for now)
     credentials: true,
   })
 );
