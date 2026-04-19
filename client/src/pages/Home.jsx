@@ -88,8 +88,10 @@ function Home() {
     { img: banner8, path: "accessories" },
   ];
 
-  const filter = (cat) => (products || []).filter((p) => p.category === cat);
-
+  const filter = (cat) =>
+  (products || []).filter((p) =>
+    p.category?.toLowerCase().includes(cat.toLowerCase())
+  );
   const getImage = (img) => {
     if (!img) return "/no-image.png";
     return img.startsWith("http")
