@@ -17,10 +17,10 @@ function StyleResultPage() {
 
   // Load Products from Backend
   useEffect(() => {
-    fetch("http://localhost:5000/api/products")
-      .then((res) => res.json())
-      .then((data) => setProducts(data))
-      .catch((err) => console.log(err));
+    fetch(`${import.meta.env.VITE_API_URL}/api/products`)
+  .then((res) => res.json())
+  .then((data) => setProducts(data))
+  .catch((err) => console.log(err));
   }, []);
 
   if (!state) return <div className="p-10">No data found</div>;
