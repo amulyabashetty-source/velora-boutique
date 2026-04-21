@@ -9,19 +9,20 @@ function StyleResultPage() {
   const [products, setProducts] = useState([]);
   const [selectedImage, setSelectedImage] = useState(null);
 
-  //  Load Hairstyles from localStorage
-  useEffect(() => {
-    const data = JSON.parse(localStorage.getItem("hairstyles")) || [];
-    setHairstyles(data);
-  }, []);
-
   // Load Products from Backend
   useEffect(() => {
     fetch(`${import.meta.env.VITE_API_URL}/api/products`)
-  .then((res) => res.json())
-  .then((data) => setProducts(data))
-  .catch((err) => console.log(err));
+      .then((res) => res.json())
+      .then((data) => setProducts(data))
+      .catch((err) => console.log(err));
   }, []);
+
+  useEffect(() => {
+  fetch(`${import.meta.env.VITE_API_URL}/api/hairstyles`)
+    .then((res) => res.json())
+    .then((data) => setHairstyles(data))
+    .catch((err) => console.log(err));
+}, []);
 
   if (!state) return <div className="p-10">No data found</div>;
 
@@ -39,24 +40,23 @@ function StyleResultPage() {
 
   //  Filter Outfits
   const outfits = products.filter((p) =>
-    selectedCategories.includes(p.category?.toLowerCase())
+    selectedCategories.includes(p.category?.toLowerCase()),
   );
 
   //  Accessories
   const accessories = products.filter((p) =>
-    ["accessories", "handbags", "footwear"].includes(
-      p.category?.toLowerCase()
-    )
+    ["accessories", "handbags", "footwear"].includes(p.category?.toLowerCase()),
   );
 
   //  Hairstyles
   const filteredHair = hairstyles.filter(
-    (h) => h.faceShape === faceShape
-  );
-
+  (h) =>
+    h.faceShape?.toLowerCase() === faceShape?.toLowerCase() &&
+    h.occasion?.toLowerCase() === occasion?.toLowerCase()
+);
+  const finalHair = filteredHair;
   return (
     <div className="bg-[#f3eee9] min-h-screen p-6">
-
       {/*  HEADER */}
       <div className="bg-white rounded-2xl p-5 shadow mb-10 flex justify-between items-center">
         <div>
@@ -105,9 +105,7 @@ function StyleResultPage() {
                 <p className="text-sm font-medium leading-snug line-clamp-2">
                   {p.name}
                 </p>
-                <p className="text-[#2f4f4f] font-semibold mt-2">
-                  ₹ {p.price}
-                </p>
+                <p className="text-[#2f4f4f] font-semibold mt-2">₹ {p.price}</p>
               </div>
             </div>
           ))
@@ -149,10 +147,10 @@ function StyleResultPage() {
       </h2>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-        {filteredHair.length === 0 ? (
+        {finalHair.length === 0 ? (
           <p>No hairstyles found</p>
         ) : (
-          filteredHair.map((h, i) => (
+          finalHair.map((h, i) => (
             <div
               key={i}
               onClick={() => setSelectedImage(h.image)}
@@ -176,7 +174,6 @@ function StyleResultPage() {
       {selectedImage && (
         <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
           <div className="relative">
-
             <button
               onClick={() => setSelectedImage(null)}
               className="absolute -top-3 -right-3 bg-white px-3 py-1 rounded-full shadow"

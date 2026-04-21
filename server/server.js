@@ -7,7 +7,7 @@ import mongoose from "mongoose";
 import productRoutes from "./routes/productRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
-
+import hairstyleRoutes from "./routes/hairstyleRoutes.js";
 const app = express();
 
 // MIDDLEWARE
@@ -25,6 +25,7 @@ app.use(express.urlencoded({ extended: true })); //  added
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/products", productRoutes);
+app.use("/api/hairstyles", hairstyleRoutes);
 
 // TEST ROUTE
 app.get("/", (req, res) => {
