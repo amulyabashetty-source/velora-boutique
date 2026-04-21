@@ -24,6 +24,7 @@ import ResetPassword from "./pages/ResetPassword";
 import StylingPage from "./pages/StylingPage";
 import AddHairstyle from "./pages/AddHairstyle";
 import StyleResultPage from "./pages/StyleResultPage";
+import AdminHairstyles from "./pages/AdminHairstyles";
 function App() {
   const location = useLocation();
 
@@ -60,6 +61,7 @@ function App() {
         <Route path="/style-match" element={<StylingPage />} />
         <Route path="/style-result" element={<StyleResultPage />} />
         <Route path="/add-hairstyle" element={<AddHairstyle />} />
+        <Route path="/adminhairstyles" element={<AdminHairstyles />} />
         <Route
           path="/admin"
           element={isAuth ? <Admin /> : <Navigate to="/login" />}

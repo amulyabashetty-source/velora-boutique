@@ -24,6 +24,18 @@ export const addHairstyle = async (req, res) => {
   }
 };
 
+export const deleteHairstyle = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    await Hairstyle.findByIdAndDelete(id);
+
+    res.json({ message: "Hairstyle deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}; 
+
 //  Get all hairstyles
 export const getHairstyles = async (req, res) => {
   try {
