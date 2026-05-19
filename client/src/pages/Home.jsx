@@ -83,11 +83,11 @@ function Home() {
   ];
 
   const banners = [
-    { img: banner1, path: "pattu-saree" },
+    { img: banner1, path: "pattu-sarees" },
     { img: banner2, path: "anarkalis" },
     { img: banner3, path: "kurtis" },
     { img: banner4, path: "lehengas" },
-    { img: banner5, path: "saree" },
+    { img: banner5, path: "sarees" },
   ];
 
   const midBanners = [
